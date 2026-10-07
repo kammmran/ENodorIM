@@ -9,6 +9,7 @@ import { ReceptorExplorer } from "./screens/ReceptorExplorer";
 import { SimulationScreen } from "./screens/SimulationScreen";
 import { StartScreen } from "./screens/StartScreen";
 import { ThemeToggle } from "./ui/Controls";
+import { useApplyShareLink } from "./ui/ShareLink";
 
 const NAV: { page: Route["page"]; href: string; label: string }[] = [
   { page: "start", href: "#/", label: "Start" },
@@ -21,6 +22,8 @@ const NAV: { page: Route["page"]; href: string; label: string }[] = [
 ];
 
 function Page({ route }: { route: Route }) {
+  // Inside the provider, so it can validate against the loaded data.
+  useApplyShareLink();
   switch (route.page) {
     case "simulate":
       return <SimulationScreen />;

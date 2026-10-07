@@ -19,6 +19,8 @@ import { ConcentrationSlider } from "../ui/Controls";
 import { Molecule } from "../ui/Molecule";
 import { ReceptorGrid, GridLegend } from "../ui/ReceptorGrid";
 import { Prov } from "../ui/Refs";
+import { ExportButtons } from "../ui/ExportButtons";
+import { ShareButton } from "../ui/ShareLink";
 
 export function MixtureScreen() {
   const data = useData();
@@ -184,6 +186,20 @@ export function MixtureScreen() {
                 />
                 <div style={{ marginTop: 8 }}>
                   <GridLegend compact />
+                </div>
+                <ExportButtons
+                  acts={sim.acts}
+                  meta={{
+                    stimulus: normalised.map((c) => c.stimulus.label).join(" + "),
+                    kind: "mixture",
+                    provenance: stimulus.provenance,
+                    concentration: conc,
+                    components: normalised.map((c) => ({ name: c.stimulus.label, fraction: c.fraction })),
+                    genotypes: profile.genotypes,
+                  }}
+                />
+                <div className="export-row">
+                  <ShareButton path="/mixtures" state={{ logConc, mixture: parts, genotypes: profile.genotypes }} />
                 </div>
               </div>
 

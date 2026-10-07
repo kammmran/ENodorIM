@@ -16,6 +16,7 @@ import { usePalette } from "../ui/colors";
 import { Molecule } from "../ui/Molecule";
 import { ReceptorGrid, GridLegend } from "../ui/ReceptorGrid";
 import { Cite, Prov } from "../ui/Refs";
+import { ExportButtons } from "../ui/ExportButtons";
 import { loadRDKit, parseMolecule } from "../ui/rdkit";
 import { Sketcher } from "../ui/Sketcher";
 
@@ -235,6 +236,17 @@ export function DrawScreen() {
                   cell={14}
                   onSelect={(g) => go(`/receptors/${g}`)}
                   label={`Predicted receptor pattern: ${predicted.length} of ${data.receptors.length} receptors predicted to respond.`}
+                />
+                <ExportButtons
+                  acts={gridValues.map((v) => v.act)}
+                  meta={{
+                    stimulus: name || "Drawn molecule",
+                    kind: "drawn molecule",
+                    provenance: "predicted",
+                    concentration: 1e-4,
+                    inchikey: prediction.inchikey,
+                    smiles: prediction.smiles,
+                  }}
                 />
                 <div style={{ marginTop: 8 }}>
                   <GridLegend compact />

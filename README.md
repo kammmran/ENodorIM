@@ -25,6 +25,25 @@ npm run typecheck
 
 The build is a static site with a relative base, so `dist/` can be served from any folder or sub-path.
 
+## Getting results out
+
+Every view that computes a receptor pattern offers it as **CSV** or **JSON** (`src/model/export.ts`). Both carry all 432
+receptors, the concentration, the InChIKey or mixture composition, the genotype, and the provenance of each value.
+
+Receptors nobody has tested export as an empty cell (CSV) or `null` (JSON) rather than `0`, so "no data" cannot silently
+become "no response" in a downstream analysis — the same distinction the interface makes.
+
+**Shareable links** (`src/state/shareLink.ts`) encode the odorant, concentration, genotype or mixture in the URL hash, so an
+exact view can be sent to a colleague or cited in a paper:
+
+```
+#/simulate?o=androstenone&c=-5.00&g=OR7D4-androstenone:WM/WM
+#/mixtures?c=-4.00&m=r-carvone:1&m=guaiacol:1
+```
+
+Unknown odorants, out-of-range concentrations and malformed values are ignored rather than throwing, because these links get
+retyped and truncated.
+
 ## Publishing
 
 The build is a self-contained static site with a relative base, so it can be served from any folder or sub-path — no server,

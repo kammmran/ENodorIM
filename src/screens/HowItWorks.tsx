@@ -274,6 +274,50 @@ export function HowItWorks() {
         </li>
       </ul>
 
+      <h2>Citing this and the data behind it</h2>
+      <p>
+        The site is a presentation of other people's measurements. If you use a figure or an exported pattern, cite the data
+        sources — that is what the work rests on:
+      </p>
+      <ul>
+        <li>
+          <strong>Receptor–odorant data:</strong> Lalis, M., Hladiš, M., Abi Khalil, S., Briand, L., Fiorucci, S. &amp;
+          Topin, J. M2OR: a database of olfactory receptor–odorant pairs. <em>Nucleic Acids Research</em> (2024).{" "}
+          <Cite doi="10.1093/nar/gkad886" />
+        </li>
+        <li>
+          <strong>Odor descriptors:</strong> the Leffingwell PMP 2001 set via Pyrfume (CC BY-NC), Dravnieks'{" "}
+          <em>Atlas of Odor Character Profiles</em> (1985), and Keller &amp; Vosshall (
+          <Cite doi="10.1186/s12868-016-0287-2" />).
+        </li>
+        <li>
+          <strong>Receptor identity and structures:</strong> HGNC (<Cite doi="10.1093/nar/gkac888" />), UniProt (
+          <Cite doi="10.1093/nar/gkae1010" />), GPCRdb (<Cite doi="10.1093/nar/gkae1065" />), AlphaFold DB (
+          <Cite doi="10.1093/nar/gkad1011" />) and the primary citation of each PDB entry.
+        </li>
+        <li>
+          Whichever genotype, structure or EC50 you quote, the specific paper is linked next to it on the page it appears
+          on — cite that, not this site, for the measurement itself.
+        </li>
+      </ul>
+      <p className="small muted">
+        For the tool: “From molecule to smell”, an interactive olfactory receptor simulator, DIFACQUIM group, School of
+        Chemistry, UNAM. Data built {data.meta.built} from M2OR{" "}
+        <span className="mono">{data.meta.m2or_file}</span>.
+      </p>
+
+      <h2>Taking results away</h2>
+      <p>
+        Every view that computes a receptor pattern offers it as <strong>CSV</strong> or <strong>JSON</strong>. Both carry
+        all {data.receptors.length} receptors, the concentration, the InChIKey or mixture composition, and the provenance of
+        each value. Receptors nobody has tested export as an empty cell (CSV) or <span className="mono">null</span> (JSON)
+        rather than a zero, so “no data” never silently becomes “no response” in a downstream analysis.
+      </p>
+      <p>
+        The <strong>Copy link to this view</strong> button produces a URL that restores the odorant, concentration, genotype
+        or mixture, so an exact figure can be shared or cited.
+      </p>
+
       <h2>References</h2>
       <ol className="refs">
         {refs.map((r) => (

@@ -44,7 +44,7 @@ export function SimulationScreen() {
             </div>
           </details>
         </div>
-        <SidePanel sim={sim} odorantId={odorantId} />
+        <SidePanel sim={sim} odorantId={odorantId} profile={profile} />
       </aside>
     </div>
   );

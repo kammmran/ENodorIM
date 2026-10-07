@@ -10,6 +10,8 @@ import { Molecule } from "../ui/Molecule";
 import { PerceptPanel } from "../ui/Percept";
 import { DoseResponse } from "../ui/Plots";
 import { CiteList, Prov } from "../ui/Refs";
+import { ExportButtons } from "../ui/ExportButtons";
+import { ShareButton } from "../ui/ShareLink";
 import { useSimulation } from "./simulationParts";
 
 type SortKey = "status" | "ec50" | "receptor";
@@ -87,6 +89,25 @@ export function OdorantExplorer({ id }: { id?: string }) {
                 )}
               </div>
             </div>
+            {sim && (
+              <>
+                <ExportButtons
+                  acts={sim.acts}
+                  meta={{
+                    stimulus: odorant.name,
+                    kind: "odorant",
+                    provenance: odorant.provenance,
+                    concentration: 10 ** logConc,
+                    inchikey: odorant.inchikey,
+                    smiles: odorant.smiles,
+                    genotypes: profile.genotypes,
+                  }}
+                />
+                <div className="export-row">
+                  <ShareButton path={`/odorants/${odorant.id}`} state={{ odorantId: odorant.id, logConc }} />
+                </div>
+              </>
+            )}
             <p className="small" style={{ marginTop: 10 }}>
               Tested on <strong>{pairs.length - n("inconclusive")}</strong> receptors: <strong>{n("agonist")}</strong> respond (
               {tiers.filter((t) => t === "dose-response").length} dose–response, {tiers.filter((t) => t === "confirmed").length} confirmed screening,{" "}

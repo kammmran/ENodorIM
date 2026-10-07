@@ -11,7 +11,10 @@ export type Route =
   | { page: "how" };
 
 export function parseRoute(hash: string): Route {
-  const parts = hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
+  // Shareable links append a query string (see shareLink.ts); it is not part
+  // of the path.
+  const path = hash.split("?")[0];
+  const parts = path.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
   switch (parts[0]) {
     case "simulate":
       return { page: "simulate" };

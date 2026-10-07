@@ -25,6 +25,8 @@ import { LinePlot, SpikeRaster } from "../ui/Plots";
 import { PerceptPanel } from "../ui/Percept";
 import { ReceptorGrid, GridLegend } from "../ui/ReceptorGrid";
 import { Prov } from "../ui/Refs";
+import { ExportButtons } from "../ui/ExportButtons";
+import { ShareButton } from "../ui/ShareLink";
 import { Molecule } from "../ui/Molecule";
 
 export function useSimulation(odorantId: string, logConc: number, profile: PersonProfile): SimulationResult | null {
@@ -230,9 +232,9 @@ export function StageView({ sim, odorantId, profile, compact = false }: { sim: S
         <span className="tiny muted">{odorant.name} · {formatConc(sim.conc)}</span>
       </div>
       {stage.id === "perception" && !compact ? (
-        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.25fr) minmax(0, 1fr)", gap: 12, alignItems: "start" }} className="perception-split">
+        <div className="perception-split">
           {scene}
-          <div style={{ padding: "12px 14px 12px 0" }}>
+          <div>
             <PerceptPanel odorant={odorant} sim={sim} profile={profile} />
           </div>
         </div>
@@ -254,7 +256,7 @@ export function StageView({ sim, odorantId, profile, compact = false }: { sim: S
 }
 
 /** Persistent panel: odorant, barcode, top receptors and live OSN plots. */
-export function SidePanel({ sim, odorantId }: { sim: SimulationResult; odorantId: string }) {
+export function SidePanel({ sim, odorantId, profile }: { sim: SimulationResult; odorantId: string; profile: PersonProfile }) {
   const data = useData();
   const time = useStore((s) => s.time);
   const pal = usePalette();
@@ -317,6 +319,24 @@ export function SidePanel({ sim, odorantId }: { sim: SimulationResult; odorantId
         />
         <div style={{ marginTop: 8 }}>
           <GridLegend compact />
+        </div>
+        <ExportButtons
+          acts={sim.acts}
+          meta={{
+            stimulus: odorant.name,
+            kind: odorant.id === MIXTURE_ID ? "mixture" : odorant.provenance === "predicted" ? "drawn molecule" : "odorant",
+            provenance: odorant.provenance,
+            concentration: sim.conc,
+            inchikey: odorant.inchikey || null,
+            smiles: odorant.smiles,
+            genotypes: profile.genotypes,
+          }}
+        />
+        <div className="export-row">
+          <ShareButton
+            path="/simulate"
+            state={{ odorantId: odorant.id, logConc: Math.log10(sim.conc), genotypes: profile.genotypes }}
+          />
         </div>
         <details className="more">
           <summary>Responding receptors ({sim.active.length})</summary>
