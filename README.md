@@ -1,5 +1,7 @@
 # From molecule to smell
 
+Project site - [Link](https://kammmran.github.io/ENodorIM/#/) </br>
+
 An interactive simulator of human olfaction: an odorant reaches the nose, binds odorant receptors, the sensory neurons fire, the olfactory bulb integrates the signal, and the cortex decodes it into a conscious smell.
 
 The centre of the project is the **receptor step**. Which of the ~400 human odorant receptors respond is taken from measured cell-assay data (M2OR); every later stage shows what that activation pattern leads to, and every value on screen is labelled `measured`, `predicted` or `schematic`.
