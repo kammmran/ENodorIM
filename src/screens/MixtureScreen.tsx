@@ -1,0 +1,319 @@
+import { useMemo } from "react";
+import { useData } from "../data/load";
+import { DRAWN_ID, predictedStimulus } from "../data/predictService";
+import { formatConc } from "../model/activation";
+import {
+  MIXTURE_ID,
+  blendDescriptors,
+  combineReceptors,
+  componentDrive,
+  mixtureStimulus,
+  normaliseFractions,
+  type MixtureComponent,
+} from "../model/mixture";
+import { simulate } from "../model/simulation";
+import { go } from "../state/router";
+import { useStore } from "../state/store";
+import { usePalette } from "../ui/colors";
+import { ConcentrationSlider } from "../ui/Controls";
+import { Molecule } from "../ui/Molecule";
+import { ReceptorGrid, GridLegend } from "../ui/ReceptorGrid";
+import { Prov } from "../ui/Refs";
+
+export function MixtureScreen() {
+  const data = useData();
+  const pal = usePalette();
+  const logConc = useStore((s) => s.logConc);
+  const profile = useStore((s) => s.profile);
+  const parts = useStore((s) => s.mixture);
+  const setMixture = useStore((s) => s.setMixture);
+  const setOdorant = useStore((s) => s.setOdorant);
+  const drawn = useStore((s) => s.drawn);
+  const conc = 10 ** logConc;
+
+  const components: MixtureComponent[] = useMemo(() => {
+    const out: MixtureComponent[] = [];
+    for (const p of parts) {
+      const s = p.id === DRAWN_ID ? (drawn ? predictedStimulus(drawn.prediction, drawn.name) : undefined) : data.stimuli.get(p.id);
+      if (s) out.push({ stimulus: s, fraction: p.fraction });
+    }
+    return out;
+  }, [parts, data, drawn]);
+
+  const normalised = useMemo(() => normaliseFractions(components), [components]);
+  const combined = useMemo(() => combineReceptors(components), [components]);
+  const stimulus = useMemo(() => (components.length ? mixtureStimulus(components) : null), [components]);
+  const sim = useMemo(
+    () => (stimulus ? simulate(stimulus, data.order, conc, profile, data.genotypeCases) : null),
+    [stimulus, data, conc, profile],
+  );
+  const drives = useMemo(() => componentDrive(components, conc), [components, conc]);
+  const descriptors = useMemo(() => blendDescriptors(components, drives), [components, drives]);
+
+  const singles = useMemo(
+    () =>
+      components.map((c) => ({
+        label: c.stimulus.label,
+        sim: simulate(c.stimulus, data.order, conc, profile, data.genotypeCases),
+      })),
+    [components, data, conc, profile],
+  );
+
+  const choices = [
+    ...data.odorants.map((o) => ({ id: o.id, name: o.name })),
+    ...(drawn ? [{ id: DRAWN_ID, name: `${drawn.name} (drawn, predicted)` }] : []),
+  ];
+  const unused = choices.filter((c) => !parts.some((p) => p.id === c.id));
+
+  const add = (id: string) => setMixture([...parts, { id, fraction: 1 }]);
+  const remove = (id: string) => setMixture(parts.filter((p) => p.id !== id));
+  const setFraction = (id: string, fraction: number) =>
+    setMixture(parts.map((p) => (p.id === id ? { ...p, fraction } : p)));
+
+  const runSimulation = () => {
+    setOdorant(MIXTURE_ID);
+    useStore.getState().setTime(0);
+    go("/simulate");
+  };
+
+  // Receptors that only respond because several components contribute.
+  const cooperative = combined.filter((r) => r.contributions.length > 1);
+
+  return (
+    <div>
+      <h1>Mixtures</h1>
+      <p className="muted" style={{ maxWidth: "80ch" }}>
+        Two or more odorants at once. Components compete for the same binding site on each receptor, so the mixture has an{" "}
+        <em>effective</em> potency per receptor — a fraction-weighted harmonic mean of the components' EC50 values. That makes
+        a mixture expressible as one stimulus, which the whole simulation then runs unchanged.
+      </p>
+      <div className="note accent" style={{ maxWidth: "80ch" }}>
+        <strong>What this model cannot do.</strong> It only lets receptors respond <em>more</em> as components are added. Real
+        mixtures show suppression and masking, where one odorant lowers the response to another — through antagonism at the
+        receptor and through processing further along. None of that is modelled here, so treat a mixture result as the
+        competitive-binding upper bound, not a prediction of perception. <Prov kind="schematic" />
+      </div>
+
+      <div className="explorer" style={{ marginTop: 16 }}>
+        <div style={{ minWidth: 0 }}>
+          <div className="panel">
+            <div className="panel-title">
+              <h2>Components ({parts.length})</h2>
+              {unused.length > 0 && (
+                <select
+                  value=""
+                  onChange={(e) => e.target.value && add(e.target.value)}
+                  aria-label="Add a component"
+                >
+                  <option value="">Add a component…</option>
+                  {unused.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+            {parts.length === 0 && <p className="small muted">Add two or more odorants to build a mixture.</p>}
+            {normalised.map((c, i) => {
+              const part = parts[i];
+              const od = part.id === DRAWN_ID ? null : data.odorantIndex.get(part.id);
+              return (
+                <div
+                  key={part.id}
+                  style={{ display: "grid", gridTemplateColumns: "60px 1fr 200px 32px", gap: 12, alignItems: "center", padding: "8px 0", borderBottom: `1px solid ${pal.line}` }}
+                >
+                  <div style={{ height: 50 }}>
+                    <Molecule smiles={od?.smiles ?? drawn?.smiles ?? null} name={c.stimulus.label} width={120} height={80} />
+                  </div>
+                  <div>
+                    <strong>{c.stimulus.label}</strong>
+                    <div className="tiny muted">
+                      {[...c.stimulus.responses.values()].filter((r) => r.pair.status === "agonist").length} receptors respond ·{" "}
+                      {Math.round(c.fraction * 100)}% of the mixture · {formatConc(c.fraction * conc)}
+                      {c.stimulus.provenance === "predicted" && " · predicted"}
+                    </div>
+                  </div>
+                  <div className="range-row">
+                    <input
+                      type="range"
+                      min={0}
+                      max={10}
+                      step={0.5}
+                      value={part.fraction}
+                      onChange={(e) => setFraction(part.id, Number(e.target.value))}
+                      aria-label={`Share of ${c.stimulus.label}`}
+                    />
+                    <output>{Math.round(c.fraction * 100)}%</output>
+                  </div>
+                  <button className="btn btn-icon" onClick={() => remove(part.id)} aria-label={`Remove ${c.stimulus.label}`}>
+                    ×
+                  </button>
+                </div>
+              );
+            })}
+            <div style={{ maxWidth: 420, marginTop: 12 }}>
+              <ConcentrationSlider />
+            </div>
+            {sim && (
+              <div className="run-bar">
+                <button className="btn btn-primary" onClick={runSimulation} disabled={!sim.active.length}>
+                  Run the simulation with this mixture
+                </button>
+                <span className="tiny muted">
+                  {sim.active.length} receptors respond at {formatConc(conc)} total
+                </span>
+              </div>
+            )}
+          </div>
+
+          {sim && stimulus && (
+            <>
+              <div className="panel">
+                <div className="panel-title">
+                  <h2>Mixture pattern</h2>
+                  <Prov kind={stimulus.provenance} />
+                </div>
+                <ReceptorGrid
+                  receptors={data.receptors}
+                  values={sim.acts.map((act) => ({ mode: "activation" as const, act }))}
+                  columns={36}
+                  cell={14}
+                  onSelect={(g) => go(`/receptors/${g}`)}
+                  label={`Mixture receptor pattern: ${sim.active.length} receptors respond at ${formatConc(conc)} total concentration.`}
+                />
+                <div style={{ marginTop: 8 }}>
+                  <GridLegend compact />
+                </div>
+              </div>
+
+              <div className="panel">
+                <div className="panel-title">
+                  <h2>Where the components meet</h2>
+                  <span className="tiny muted">{cooperative.length} receptors driven by more than one component</span>
+                </div>
+                {cooperative.length ? (
+                  <div className="table-scroll">
+                    <table className="data">
+                      <thead>
+                        <tr>
+                          <th>Receptor</th>
+                          <th className="num">Mixture EC50</th>
+                          <th className="num">Best single</th>
+                          <th>Who drives it</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {cooperative.slice(0, 20).map((r) => (
+                          <tr key={r.receptor}>
+                            <td>
+                              <a className="mono" href={`#/receptors/${r.receptor}`}>
+                                {r.receptor}
+                              </a>
+                            </td>
+                            <td className="num">
+                              {r.ec50 !== null ? formatConc(r.ec50) : "–"}
+                              {r.qualitative && <abbr title="Rests partly on screening-only data"> ?</abbr>}
+                            </td>
+                            <td className="num">{r.bestSingleEc50 !== null ? formatConc(r.bestSingleEc50) : "–"}</td>
+                            <td className="tiny">
+                              {r.contributions.map((c, i) => (
+                                <span key={c.component}>
+                                  {i > 0 && " · "}
+                                  {c.component} <span className="muted">{Math.round(c.share * 100)}%</span>
+                                </span>
+                              ))}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="small muted">
+                    No receptor is activated by more than one component, so at this ratio the mixture is just the union of its
+                    parts.
+                  </p>
+                )}
+                <p className="tiny muted" style={{ marginTop: 6 }}>
+                  “Mixture EC50” is the total concentration at which the mixture half-activates that receptor. It is never more
+                  potent than the best single component, because at a fixed total concentration adding a weaker partner dilutes
+                  the stronger one.
+                </p>
+              </div>
+
+              <div className="panel">
+                <div className="panel-title">
+                  <h2>Each component alone</h2>
+                  <span className="tiny muted">same total concentration, for comparison</span>
+                </div>
+                <div style={{ display: "grid", gap: 10 }}>
+                  {singles.map((s) => (
+                    <div key={s.label}>
+                      <div className="plot-title">
+                        <span>{s.label}</span>
+                        <strong>{s.sim.active.length} respond</strong>
+                      </div>
+                      <ReceptorGrid
+                        receptors={data.receptors}
+                        values={s.sim.acts.map((act) => ({ mode: "activation" as const, act }))}
+                        columns={44}
+                        cell={8}
+                        label={`${s.label} alone: ${s.sim.active.length} receptors respond`}
+                        showClassLabels={false}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        <aside>
+          {descriptors.length > 0 && (
+            <div className="panel">
+              <div className="panel-title">
+                <h2>Blended words</h2>
+                <Prov kind="schematic" />
+              </div>
+              <div className="bars">
+                {descriptors.map((d) => (
+                  <div className="row" key={d.label}>
+                    <span>{d.label}</span>
+                    <span className="bar">
+                      <span style={{ width: `${Math.min(100, d.weight * 100)}%` }} />
+                    </span>
+                    <span className="num">{Math.round(d.weight * 100)}%</span>
+                  </div>
+                ))}
+              </div>
+              <p className="source-line" style={{ marginTop: 8 }}>
+                Each component's reported words, weighted by how much receptor drive it contributes. This is a blend for
+                display: a real mixture is not the sum of its parts, and new qualities can appear that none of the components
+                has.
+              </p>
+            </div>
+          )}
+          <div className="panel">
+            <h2>The model</h2>
+            <p className="small">
+              At one receptor, components compete for the same site:
+            </p>
+            <p className="mono small" style={{ background: "var(--surface-2)", padding: "8px 10px", borderRadius: "var(--radius)" }}>
+              a = Σ(C<sub>i</sub>/EC50<sub>i</sub>) / (1 + Σ(C<sub>i</sub>/EC50<sub>i</sub>))
+            </p>
+            <p className="small">
+              With C<sub>i</sub> = f<sub>i</sub>·C this is an ordinary Hill curve with EC50<sub>mix</sub> = 1 / Σ(f<sub>i</sub>
+              /EC50<sub>i</sub>), so the mixture becomes a single stimulus and every later stage runs unchanged.
+            </p>
+            <p className="small muted">
+              Assumes equal efficacy and one shared site per receptor, and no antagonism. Components known only from screening
+              enter with a weak stand-in potency and mark the result “?”.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  );
+}

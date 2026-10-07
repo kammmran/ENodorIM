@@ -1,0 +1,452 @@
+------------------------------------------------------------------------------
+DATA SUMMARY  (M2OR file: M2OR_20230428.csv; built 2026-10-07)
+------------------------------------------------------------------------------
+Human single-compound experiments: 47,316  ->  consensus pairs: 37,849 (reference alleles 27,503, variant alleles 10,346)
+Reference-allele pairs: agonist 1,306 | non-agonist 25,827 | inconclusive 370
+   agonists by evidence: ec50 545, primaryScreening 651, secondaryScreening 110
+HGNC protein-coding human OR genes: 417
+Human ORs tested in M2OR (reference allele): 422  |  with >= 1 agonist: 235 (230 of them protein-coding in HGNC)
+Pairs with a numeric EC50: 513 reference-allele (42 only from Mainland 2015 whole-log values), 791 incl. variant alleles; censored (EC50 > x): 32
+   flagged: 9 EC50 values fitted below 1 nM, i.e. below the range these assays test (OR51E2; sources: 10.3389/fonc.2018.00162)
+M2OR gene names -> HGNC symbols: {'symbol': 410, 'uniprot': 34, 'unmapped': 4, 'alias': 25, 'sequence': 1}
+   unmapped (kept as-is): OR11H13, OR2T32, ORM2B, ORN4C
+------------------------------------------------------------------------------
+TEST ODORANTS  (reference alleles; claimed = receptor named in the brief)
+------------------------------------------------------------------------------
+
+propionic acid  [XBDQKXXYIPTUBI-UHFFFAOYSA-N]
+   tested on 28 receptors, 1 agonists, 1 inconclusive
+     + OR51E2    ec50                EC50 363 µM                        10.1038/sdata.2015.2; 10.1093/chemse/bju073; 10.1126/scisign
+   claim OR51E2: CONFIRMED agonist
+
+muscone (racemic)  [ALHUZKCOMYUFRB-UHFFFAOYSA-N]
+   other stereo form in M2OR: ALHUZKCOMYUFRB-OAHLLOKOSA-N  tested on 1, agonists: OR5AN1 (ec50, EC50 13.3 µM)
+   other stereo form in M2OR: ALHUZKCOMYUFRB-HNNXBMFYSA-N  tested on 1, agonists: OR5AN1 (ec50, EC50 11.3 µM)
+   tested on 394 receptors, 3 agonists
+     + OR1A1     secondaryScreening                                     10.1016/j.jsb.2007.04.013; 10.1523/jneurosci.3259-15.2016
+     + OR5A2     ec50                EC50 5.62 µM                       10.1016/j.neuron.2013.10.021; 10.1093/chemse/bjaa007; 10.152
+     + OR5AN1    ec50                EC50 20 µM                         10.1016/j.neuron.2013.10.021; 10.1093/chemse/bjaa007; 10.109
+   claim OR5AN1: CONFIRMED agonist
+   claim OR1A1: CONFIRMED agonist
+
+androstenone  [HFVMLYAGWXSTQI-QYXZOKGRSA-N]
+   tested on 371 receptors, 54 agonists, 5 inconclusive
+     + OR10A2    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR10Q1    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR1A2     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR1M1     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR1S2     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR2M5     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR4A4P    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR4B1     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR4C6     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR4D10    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR4D9     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR4F17    ec50                EC50 1e+03 µM (±0.5 log, rounded)  10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR4F4     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4P4     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR4S2     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR51B6    primaryScreening                                       10.1038/sdata.2015.2
+     + OR51D1    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR51E2    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR51G1    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR51G2    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR51H1    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR51I2    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR51L1    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR51Q1    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR52B2    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR52D1    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR52E6    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR52E8    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR52K1    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR52K2    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR52M1    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR52N1    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR52P1    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR5A2     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR5AP2    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR5AR1    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR5AS1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR5B17    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR5B3     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR5D14    secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR5I1     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR5M9     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR5P2     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR6M1     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR6T1     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR7C1     ec50                EC50 100 µM (±0.5 log, rounded)    10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR7D4     ec50                EC50 10 µM                         10.1038/nature06162; 10.1038/sdata.2015.2; 10.1093/chemse/bj
+     + OR8D1     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR8D2     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR8I2     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR8J3     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR8K5     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR9G9     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+     + OR9I1     secondaryScreening                                     10.1038/nature06162; 10.1038/sdata.2015.2
+   claim OR7D4: CONFIRMED agonist
+   variant alleles of claimed receptors: OR7D4_T133M=agonist EC50 17 µM; OR7D4_R88W=agonist EC50 > 30 µM; OR7D4_S84N=agonist EC50 4.2 µM; OR7D4_H131Q=agonist; OR7D4_C139R=agonist; OR7D4_C139Y=agonist; OR7D4_L292M=agonist; OR7D4_R88W_T133M=inconclusive; OR7D4_P79L=inconclusive; OR7D4_D52G=non_agonist; OR7D4_S75C=non_agonist; OR7D4_M136I=non_agonist; OR7D4_L162P=non_agonist; OR7D4_A279D=non_agonist
+
+guaiacol  [LHGVFZTZFXWLCP-UHFFFAOYSA-N]
+   tested on 283 receptors, 5 agonists, 1 inconclusive
+     + OR10C1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR10G7    ec50                EC50 1 µM (±0.5 log, rounded)      10.1038/sdata.2015.2
+     + OR5I1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR6K2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR9A4     primaryScreening                                       10.1038/sdata.2015.2
+   claim OR10G4: only variant alleles tested: A9V_M134V_V195E_R235G_K295Q=agonist
+   variant alleles of claimed receptors: OR10G4_A9V_M134V_V195E_R235G_K295Q=agonist
+
+vanillin  [MWOOGOJBHIARFG-UHFFFAOYSA-N]
+   tested on 279 receptors, 5 agonists, 10 inconclusive
+     + OR10G3    ec50                EC50 94.8 µM                       10.1038/sdata.2015.2; 10.1093/chemse/bju073
+     + OR10G7    primaryScreening                                       10.1038/sdata.2015.2
+     + OR10J3    primaryScreening                                       10.1038/sdata.2015.2
+     + OR1S1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4F21    primaryScreening                                       10.1038/sdata.2015.2
+   claim OR10G4: in data but inconclusive
+   variant alleles of claimed receptors: OR10G4_A9V_M134V_V195E_R235G_K295Q=agonist EC50 316 µM; OR10G4_K295Q=agonist EC50 10 µM (±0.5 log, rounded)
+
+β-ionone  [PSQYTAPXSHCGMF-BQYQJAHWSA-N]
+   tested on 19 receptors, 4 agonists
+     + OR1A2     primaryScreening                                       10.1016/j.jsb.2007.04.013
+     + OR2B3     secondaryScreening                                     10.3389/fphar.2015.00035
+     + OR52D1    primaryScreening                                       10.1093/chemse/bji002
+     + OR5A1     ec50                EC50 1.3 µM                        10.1093/chemse/bju073
+   claim OR5A1: CONFIRMED agonist
+
+cis-3-hexen-1-ol  [UFLHIIWVXFIJGU-ARJAWSKDSA-N]
+   tested on 387 receptors, 4 agonists, 7 inconclusive
+     + OR10A6    ec50                EC50 > 1e+03 µM                    10.1038/sdata.2015.2; 10.1371/journal.pone.0267356
+     + OR1A1     ec50                EC50 > 1e+03 µM                    10.1038/sdata.2015.2; 10.1093/chemse/bjw117; 10.1371/journal
+     + OR4S2     ec50                EC50 > 1e+03 µM                    10.1038/sdata.2015.2; 10.1371/journal.pone.0267356
+     + OR5P3     ec50                EC50 > 1e+03 µM                    10.1038/sdata.2015.2; 10.1371/journal.pone.0267356
+   claim OR2J3: in data but inconclusive
+   variant alleles of claimed receptors: OR2J3_I228V_M261I=agonist EC50 3.16 µM; OR2J3_I228V=agonist EC50 31.6 µM; OR2J3_R226Q_I228V_M261I=agonist EC50 100 µM (±0.5 log, rounded); OR2J3_R226Q=agonist EC50 73.6 µM; OR2J3_I261M=agonist EC50 45 µM; OR2J3_V228I_I261M=agonist EC50 17.8 µM; OR2J3_T113A=agonist EC50 19.3 µM; OR2J3_T113A_I261M=agonist EC50 8.2 µM; OR2J3_T113A_R226Q_I228V_M261I=non_agonist; OR2J3_T113A_R226Q=non_agonist; OR2J3_L66P=non_agonist; OR2J3_T113A_M139I_R226Q=non_agonist
+
+bourgeonal  [FZJUFJKVIYFBSY-UHFFFAOYSA-N]
+   tested on 282 receptors, 9 agonists, 1 inconclusive
+     + OR10A5    primaryScreening                                       10.1038/sdata.2015.2
+     + OR11H1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR1D2     secondaryScreening                                     10.1038/sdata.2015.2; 10.1126/science.1080376
+     + OR2D2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4F4     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4F5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR51B6    primaryScreening                                       10.1038/sdata.2015.2
+     + OR51I1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52N5    primaryScreening                                       10.1038/sdata.2015.2
+   claim OR1D2: CONFIRMED agonist
+
+isovaleric acid  [GWYFCOCPABKNJV-UHFFFAOYSA-N]
+   tested on 285 receptors, 8 agonists, 2 inconclusive
+     + OR10G7    primaryScreening                                       10.1038/sdata.2015.2
+     + OR11H4    ec50                EC50 100 µM                        10.1038/sdata.2015.2
+     + OR11H6    ec50                EC50 100 µM                        10.1038/sdata.2015.2
+     + OR1E1     ec50                EC50 100 µM (±0.5 log, rounded)    10.1038/sdata.2015.2
+     + OR51I2    ec50                EC50 58.9 µM                       10.1038/sdata.2015.2; 10.1093/chemse/bju073
+     + OR8B12    primaryScreening                                       10.1038/sdata.2015.2
+     + OR8U8     ec50                EC50 1e+03 µM (±0.5 log, rounded)  10.1038/sdata.2015.2
+     + OR9A2     secondaryScreening                                     10.1038/sdata.2015.2
+
+(S)-(−)-citronellol  [QMVPMAAFGQKVCJ-JTQLQIEISA-N]
+   other stereo form in M2OR: QMVPMAAFGQKVCJ-SNVBAGLBSA-N  tested on 2, agonists: OR1A1 (ec50, EC50 82.4 µM), OR1A2 (ec50, EC50 81.1 µM)
+   other stereo form in M2OR: QMVPMAAFGQKVCJ-UHFFFAOYSA-N  tested on 1, agonists: OR1D2 (ec50, EC50 30.9 µM)
+   tested on 11 receptors, 3 agonists
+     + OR1A1     ec50                EC50 91.8 µM                       10.1016/j.jsb.2007.04.013; 10.1126/scisignal.2000016
+     + OR2M7     ec50                EC50 140 µM                        10.1126/scisignal.2000016
+     + OR2W1     ec50                EC50 7.83 µM                       10.1126/scisignal.2000016
+   claim OR1A1: CONFIRMED agonist
+   variant alleles of claimed receptors: OR1A1_T99M=agonist EC50 98.6 µM; OR1A1_T110A=agonist EC50 68.7 µM; OR1A1_I114T=agonist EC50 84.5 µM; OR1A1_A154T_N155S=agonist EC50 103 µM; OR1A1_I205V=agonist EC50 110 µM; OR1A1_V254T=agonist EC50 84.9 µM; OR1A1_T277V=agonist EC50 101 µM; OR1A1_G108A=non_agonist; OR1A1_N109K=non_agonist; OR1A1_G108A_N109K=non_agonist; OR1A1_G108A_N109K_A154T_N155S=non_agonist
+
+(R)-(−)-carvone  [ULDHMXUKGWMISQ-SECBINFHSA-N]
+   other stereo form in M2OR: ULDHMXUKGWMISQ-VIFPVBQESA-N  tested on 378, agonists: OR1A1 (ec50, EC50 271 µM), OR2W1 (ec50, EC50 22.6 µM), OR5P3 (ec50, EC50 69 µM), OR10A6 (ec50, EC50 373 µM)
+   tested on 378 receptors, 16 agonists
+     + OR10A6    ec50                EC50 > 1e+03 µM                    10.1371/journal.pone.0267356
+     + OR10G4    primaryScreening                                       10.1371/journal.pone.0267356
+     + OR10V1    primaryScreening                                       10.1371/journal.pone.0267356
+     + OR11H12   ec50                EC50 16 µM                         10.1021/acscentsci.1c01495; 10.1371/journal.pone.0267356
+     + OR1A1     ec50                EC50 29.9 µM                       10.1007/s00018-017-2576-z; 10.1016/j.jsb.2007.04.013; 10.109
+     + OR1D2     primaryScreening                                       10.1371/journal.pone.0267356
+     + OR2W1     ec50                EC50 89.9 µM                       10.1016/j.foodchem.2021.131680; 10.1093/chemse/bjw117; 10.11
+     + OR4F6     primaryScreening                                       10.1371/journal.pone.0267356
+     + OR52E2    primaryScreening                                       10.1371/journal.pone.0267356
+     + OR5K1     ec50                EC50 > 1e+03 µM                    10.1096/fj.202100224r; 10.1371/journal.pone.0267356
+     + OR5P3     ec50                EC50 10.7 µM                       10.1126/scisignal.2000016; 10.1371/journal.pone.0267356
+     + OR6N1     primaryScreening                                       10.1371/journal.pone.0267356
+     + OR8B3     ec50                EC50 632 µM                        10.1371/journal.pone.0267356
+     + OR8H1     ec50                EC50 249 µM                        10.1371/journal.pone.0267356
+     + OR8K5     ec50                EC50 5 µM                          10.1021/acscentsci.1c01495; 10.1371/journal.pone.0267356
+     + OR8U3     ec50                EC50 12 µM                         10.1021/acscentsci.1c01495; 10.1371/journal.pone.0267356
+   claim OR1A1: CONFIRMED agonist
+   variant alleles of claimed receptors: OR1A1_A106G=agonist EC50 366 µM; OR1A1_A106T (SNP)=agonist EC50 > 450 µM; OR1A1_G108A=agonist EC50 196 µM; OR1A1_D111A=agonist EC50 390 µM; OR1A1_D111S=agonist EC50 246 µM; OR1A1_G152A=agonist EC50 142 µM; OR1A1_N155S=agonist EC50 > 800 µM; OR1A1_I205V=agonist EC50 159 µM; OR1A1_S248F=agonist EC50 405 µM; OR1A1_Y250F=agonist EC50 345 µM; OR1A1_Y251F=agonist EC50 > 500 µM; OR1A1_Y276F=agonist EC50 115 µM; OR1A1_T277M (SNP)=agonist EC50 > 400 µM; OR1A1_T280A=agonist EC50 232 µM; OR1A1_T280M=agonist EC50 > 400 µM; OR1A1_G108A_G152A=agonist EC50 309 µM; OR1A1_G108A_I205V=agonist EC50 221 µM; OR1A1_D111S_T280A=agonist EC50 309 µM; OR1A1_G152A_I205V=agonist EC50 218 µM; OR1A1_G108A_G152A_I205V=agonist EC50 269 µM; OR1A1_N109D=non_agonist; OR1A1_N109K=non_agonist; OR1A1_S112A=non_agonist; OR1A1_Y251M=non_agonist; OR1A1_Y258F=non_agonist; OR1A1_Y258M=non_agonist; OR1A1_Y276L=non_agonist; OR1A1_T280F=non_agonist; OR1A1_G108A_N109K=non_agonist; OR1A1_D111A_T280A=non_agonist
+
+(S)-(+)-carvone  [ULDHMXUKGWMISQ-VIFPVBQESA-N]
+   other stereo form in M2OR: ULDHMXUKGWMISQ-SECBINFHSA-N  tested on 378, agonists: OR1A1 (ec50, EC50 29.9 µM), OR2W1 (ec50, EC50 89.9 µM), OR5K1 (ec50, EC50 > 1e+03 µM), OR5P3 (ec50, EC50 10.7 µM), OR11H12 (ec50, EC50 16 µM), OR8U3 (ec50, EC50 12 µM), OR8K5 (ec50, EC50 5 µM), OR1D2 (primaryScreening), OR4F6 (primaryScreening), OR6N1 (primaryScreening), OR8B3 (ec50, EC50 632 µM), OR8H1 (ec50, EC50 249 µM), OR10A6 (ec50, EC50 > 1e+03 µM), OR10G4 (primaryScreening), OR10V1 (primaryScreening), OR52E2 (primaryScreening)
+   tested on 378 receptors, 4 agonists
+     + OR10A6    ec50                EC50 373 µM                        10.1371/journal.pone.0267356
+     + OR1A1     ec50                EC50 271 µM                        10.1007/s00018-017-2576-z; 10.1016/j.jsb.2007.04.013; 10.102
+     + OR2W1     ec50                EC50 22.6 µM                       10.1126/scisignal.2000016; 10.1371/journal.pone.0267356
+     + OR5P3     ec50                EC50 69 µM                         10.1093/chemse/bju073; 10.1126/scisignal.2000016; 10.1371/jo
+   claim OR1A1: CONFIRMED agonist
+   variant alleles of claimed receptors: OR1A1_R128H=agonist EC50 0.1 µM (±0.5 log, rounded); OR1A1_V233M=agonist EC50 0.01 µM (±0.5 log, rounded); OR1A1_P285S=agonist EC50 0.01 µM (±0.5 log, rounded); OR1A1_G108A=agonist EC50 > 300 µM; OR1A1_D111S=agonist EC50 > 550 µM; OR1A1_G152A=agonist EC50 > 300 µM; OR1A1_I205V=agonist EC50 > 550 µM; OR1A1_S248F=agonist EC50 536 µM; OR1A1_Y276F=agonist EC50 264 µM; OR1A1_T280A=agonist EC50 > 250 µM; OR1A1_G152A_I205V=agonist EC50 489 µM; OR1A1_A106G=non_agonist; OR1A1_A106T (SNP)=non_agonist; OR1A1_N109D=non_agonist; OR1A1_N109K=non_agonist; OR1A1_D111A=non_agonist; OR1A1_S112A=non_agonist; OR1A1_N155S=non_agonist; OR1A1_Y250F=non_agonist; OR1A1_Y251F=non_agonist; OR1A1_Y251M=non_agonist; OR1A1_Y258F=non_agonist; OR1A1_Y258M=non_agonist; OR1A1_Y276L=non_agonist; OR1A1_T277M (SNP)=non_agonist; OR1A1_T280F=non_agonist; OR1A1_T280M=non_agonist; OR1A1_G108A_N109K=non_agonist; OR1A1_G108A_G152A=non_agonist; OR1A1_G108A_I205V=non_agonist; OR1A1_D111A_T280A=non_agonist; OR1A1_D111S_T280A=non_agonist; OR1A1_G108A_G152A_I205V=non_agonist
+
+isoeugenol  [BJIOGJUNALELMI-ONEGZZNKSA-N]
+   tested on 276 receptors, 62 agonists, 8 inconclusive
+     + OR10A5    primaryScreening                                       10.1038/sdata.2015.2
+     + OR10A6    ec50                EC50 100 µM (±0.5 log, rounded)    10.1038/sdata.2015.2
+     + OR10G7    primaryScreening                                       10.1038/sdata.2015.2
+     + OR10J3    primaryScreening                                       10.1038/sdata.2015.2
+     + OR10P1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR11G2    primaryScreening                                       10.1038/sdata.2015.2
+     + OR13C2    primaryScreening                                       10.1038/sdata.2015.2
+     + OR13C8    primaryScreening                                       10.1038/sdata.2015.2
+     + OR1F12P   primaryScreening                                       10.1038/sdata.2015.2
+     + OR1J1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR1N2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR1S1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2A42    primaryScreening                                       10.1038/sdata.2015.2
+     + OR2A5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2AT4    ec50                EC50 10 µM (±0.5 log, rounded)     10.1038/sdata.2015.2
+     + OR2D2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2J2     ec50                EC50 31.6 µM                       10.1038/sdata.2015.2
+     + OR2L13    primaryScreening                                       10.1038/sdata.2015.2
+     + OR2L5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2M5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2S2     ec50                EC50 100 µM (±0.5 log, rounded)    10.1038/sdata.2015.2
+     + OR2T2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2T8     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2V1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2W1     ec50                EC50 514 µM                        10.1016/j.foodchem.2021.131680; 10.1038/sdata.2015.2; 10.109
+     + OR3A2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR3A3     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4A5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4C6     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4D5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4F21    primaryScreening                                       10.1038/sdata.2015.2
+     + OR4S2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR51A2    primaryScreening                                       10.1038/sdata.2015.2
+     + OR51B2    primaryScreening                                       10.1038/sdata.2015.2
+     + OR51B5    primaryScreening                                       10.1038/sdata.2015.2
+     + OR51S1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR51V1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52A4P   primaryScreening                                       10.1038/sdata.2015.2
+     + OR52A5    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52B2    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52H1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52I1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52N5    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52P1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52W1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR56A4    primaryScreening                                       10.1038/sdata.2015.2
+     + OR56A5    primaryScreening                                       10.1038/sdata.2015.2
+     + OR5AR1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR5B12    primaryScreening                                       10.1038/sdata.2015.2
+     + OR5B3     primaryScreening                                       10.1038/sdata.2015.2
+     + OR5J2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR5M11    primaryScreening                                       10.1038/sdata.2015.2
+     + OR5M9     primaryScreening                                       10.1038/sdata.2015.2
+     + OR5P2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR6A2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR6M1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR6V1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR6X1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR8A1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR8B12    primaryScreening                                       10.1038/sdata.2015.2
+     + OR8B2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR8I2     primaryScreening                                       10.1038/sdata.2015.2
+
+geranyl acetate  [HIGQPQRQIQDZMP-DHZHZOJOSA-N]
+   other stereo form in M2OR: HIGQPQRQIQDZMP-UHFFFAOYSA-N  tested on 2, agonists: none
+   other stereo form in M2OR: HIGQPQRQIQDZMP-FLIBITNWSA-N  tested on 1, agonists: OR1D2 (ec50, EC50 562 µM)
+   tested on 282 receptors, 40 agonists, 4 inconclusive
+     + OR10A6    primaryScreening                                       10.1038/sdata.2015.2
+     + OR10G7    primaryScreening                                       10.1038/sdata.2015.2
+     + OR10H2    ec50                EC50 1e+03 µM (±0.5 log, rounded)  10.1038/sdata.2015.2
+     + OR10J1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR10Q1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR11G2    primaryScreening                                       10.1038/sdata.2015.2
+     + OR13C2    primaryScreening                                       10.1038/sdata.2015.2
+     + OR1D2     ec50                EC50 100 µM                        10.1038/sdata.2015.2; 10.1093/chemse/bju073
+     + OR1F12P   primaryScreening                                       10.1038/sdata.2015.2
+     + OR2A14    primaryScreening                                       10.1038/sdata.2015.2
+     + OR2A25    ec50                EC50 1 µM                          10.1038/sdata.2015.2
+     + OR2A42    primaryScreening                                       10.1038/sdata.2015.2
+     + OR2H2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2J3     ec50                EC50 1e+03 µM (±0.5 log, rounded)  10.1038/sdata.2015.2
+     + OR2L5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2M5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2T8     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2W1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR3A1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4A5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4D5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4F21    primaryScreening                                       10.1038/sdata.2015.2
+     + OR4F4     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4F5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4M1     secondaryScreening                                     10.1038/sdata.2015.2
+     + OR51E1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR51S1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52A4P   primaryScreening                                       10.1038/sdata.2015.2
+     + OR52A5    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52H1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52N5    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52W1    secondaryScreening                                     10.1038/sdata.2015.2
+     + OR56A4    primaryScreening                                       10.1038/sdata.2015.2
+     + OR5J2     secondaryScreening                                     10.1038/sdata.2015.2
+     + OR5M11    primaryScreening                                       10.1038/sdata.2015.2
+     + OR5M9     primaryScreening                                       10.1038/sdata.2015.2
+     + OR6K3     primaryScreening                                       10.1038/sdata.2015.2
+     + OR6X1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR8B2     secondaryScreening                                     10.1038/sdata.2015.2
+     + OR9A4     primaryScreening                                       10.1038/sdata.2015.2
+
+(−)-menthol  [NOOLISFMXDJSKH-KXUCPTDWSA-N]
+   other stereo form in M2OR: NOOLISFMXDJSKH-AEJSXWLSSA-N  tested on 285, agonists: OR2W1 (primaryScreening), OR51E1 (primaryScreening), OR4F4 (primaryScreening), OR4F5 (primaryScreening), OR5M11 (secondaryScreening)
+   other stereo form in M2OR: NOOLISFMXDJSKH-UHFFFAOYSA-N  tested on 2, agonists: OR1G1 (primaryScreening)
+   tested on 273 receptors, 38 agonists, 10 inconclusive
+     + OR10H3    primaryScreening                                       10.1038/sdata.2015.2
+     + OR11A1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR13H1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR1A1     secondaryScreening                                     10.1038/sdata.2015.2
+     + OR1E2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR1G1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR1N1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR1S1     secondaryScreening                                     10.1038/sdata.2015.2
+     + OR2A2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2AG2    primaryScreening                                       10.1038/sdata.2015.2
+     + OR2B2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2G6     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2L13    primaryScreening                                       10.1038/sdata.2015.2
+     + OR2L3     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2L8     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2S2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2T29    primaryScreening                                       10.1038/sdata.2015.2
+     + OR2W1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4A16    primaryScreening                                       10.1038/sdata.2015.2
+     + OR4A4P    primaryScreening                                       10.1038/sdata.2015.2
+     + OR4F4     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4F6     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4M1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR51B5    primaryScreening                                       10.1038/sdata.2015.2
+     + OR51L1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52B4    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52I1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR5D16    primaryScreening                                       10.1038/sdata.2015.2
+     + OR5H1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR5M8     primaryScreening                                       10.1038/sdata.2015.2
+     + OR5P3     primaryScreening                                       10.1038/sdata.2015.2
+     + OR6C65    primaryScreening                                       10.1038/sdata.2015.2
+     + OR6C75    primaryScreening                                       10.1038/sdata.2015.2
+     + OR6K3     primaryScreening                                       10.1038/sdata.2015.2
+     + OR7A5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR7G2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR8A1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR8U8     primaryScreening                                       10.1038/sdata.2015.2
+
+phenylacetaldehyde  [DTUQWGWMVIHBKE-UHFFFAOYSA-N]
+   tested on 282 receptors, 38 agonists, 2 inconclusive
+     + OR10A5    primaryScreening                                       10.1038/sdata.2015.2
+     + OR10G7    primaryScreening                                       10.1038/sdata.2015.2
+     + OR11G2    primaryScreening                                       10.1038/sdata.2015.2
+     + OR11H1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR13C2    primaryScreening                                       10.1038/sdata.2015.2
+     + OR1D2     secondaryScreening                                     10.1038/sdata.2015.2; 10.1126/science.1080376
+     + OR1F12P   primaryScreening                                       10.1038/sdata.2015.2
+     + OR1J1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2A42    primaryScreening                                       10.1038/sdata.2015.2
+     + OR2D2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2J2     ec50                EC50 10 µM                         10.1038/sdata.2015.2
+     + OR2L5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2T2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2T8     primaryScreening                                       10.1038/sdata.2015.2
+     + OR2V1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4A5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4D5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4F21    primaryScreening                                       10.1038/sdata.2015.2
+     + OR4F4     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4F5     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4M1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR4N2     secondaryScreening                                     10.1038/sdata.2015.2
+     + OR51A2    primaryScreening                                       10.1038/sdata.2015.2
+     + OR51B6    primaryScreening                                       10.1038/sdata.2015.2
+     + OR51I1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR51L1    secondaryScreening                                     10.1038/sdata.2015.2
+     + OR51S1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR51V1    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52A4P   primaryScreening                                       10.1038/sdata.2015.2
+     + OR52A5    primaryScreening                                       10.1038/sdata.2015.2
+     + OR52N5    primaryScreening                                       10.1038/sdata.2015.2
+     + OR5J2     primaryScreening                                       10.1038/sdata.2015.2
+     + OR5M11    primaryScreening                                       10.1038/sdata.2015.2
+     + OR6P1     ec50                EC50 10 µM (±0.5 log, rounded)     10.1038/sdata.2015.2
+     + OR6V1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR6X1     primaryScreening                                       10.1038/sdata.2015.2
+     + OR8B12    primaryScreening                                       10.1038/sdata.2015.2
+     + OR8B2     primaryScreening                                       10.1038/sdata.2015.2
+
+------------------------------------------------------------------------------
+MOST BROADLY TUNED (reference allele, >= 20 molecules tested)
+------------------------------------------------------------------------------
+   OR2W1     agonists 134 / tested  292
+   OR1D2     agonists 103 / tested  177
+   OR1A1     agonists  65 / tested  319
+   OR1G1     agonists  46 / tested  158
+   OR5A2     agonists  35 / tested  103
+   OR52D1    agonists  32 / tested  159
+   OR51E2    agonists  30 / tested  193
+   OR5AN1    agonists  29 / tested  115
+   OR5K1     agonists  27 / tested  231
+   OR10G7    agonists  25 / tested   70
+   OR1A2     agonists  22 / tested  151
+   OR4F4     agonists  20 / tested   72
+   OR1A1: rank 3 by number of agonists
+   OR2W1: rank 1 by number of agonists
+
+------------------------------------------------------------------------------
+REFERENCES
+------------------------------------------------------------------------------
+54 references; unresolved DOIs: 0 []
+   10.1016/s0092-8674(94)90562-2       Chess et al.           1994  Allelic inactivation regulates olfactory receptor gene expression
+   10.1038/nature06162                 Keller et al.          2007  Genetic variation in a human odorant receptor alters odour perception
+   10.1038/nn.3598                     Mainland et al.        2014  The missense of smell: functional variability in the human odorant rec
+   10.1038/s41467-023-43983-9          Choi et al.            2023  Understanding the molecular mechanisms of odorant binding and activati
+   10.1038/s41586-023-05798-y          Billesbølle et al.     2023  Structural basis of odorant recognition by a human odorant receptor
+   10.1038/s41586-024-08126-0          de March et al.        2024  Engineered odorant receptors illuminate the basis of odour discriminat
+   10.1038/sdata.2015.2                Mainland et al.        2015  Human olfactory receptor responses to odorants
+   10.1073/pnas.1804106115             Trimmer et al.         2019  Genetic variation across the human olfactory receptor repertoire alter
+   10.1073/pnas.2101209118             Iravani et al.         2021  The human olfactory bulb processes odor valence representation and cue
+   10.1085/jgp.201110645               Reisert & Zhao         2011  Response kinetics of olfactory receptor neurons and the implications i
+   10.1093/chemse/bjs049               McRae et al.           2012  Genetic Variation in the Odorant Receptor OR2J3 Is Associated with the
+   10.1093/nar/gkac888                 Seal et al.            2023  Genenames.org: the HGNC resources in 2023
+   10.1093/nar/gkad1011                Varadi et al.          2024  AlphaFold Protein Structure Database in 2024: providing structure cove
+   10.1093/nar/gkad886                 Lalis et al.           2024  M2OR: a database of olfactory receptor–odorant pairs for understanding
+   10.1093/nar/gkae1010                The UniProt Consortium 2025  UniProt: the Universal Protein Knowledgebase in 2025
+   10.1093/nar/gkae1065                Herrera et al.         2025  GPCRdb in 2025: adding odorant receptors, data mapper, structure simil
+   10.1126/science.aal2014             Keller et al.          2017  Predicting human olfactory perception from chemical features of odor m
+   10.1126/science.ade4401             Lee et al.             2023  A principal odor map unifies diverse tasks in olfactory perception
+   10.1186/s12868-016-0287-2           Keller & Vosshall      2016  Olfactory perception of chemically diverse molecules
+   10.1371/journal.pbio.0050284        Menashe et al.         2007  Genetic Elucidation of Human Hyperosmia to Isovaleric Acid
+   10.1371/journal.pone.0002640        Maresh et al.          2008  Principles of Glomerular Organization in the Human Olfactory Bulb – Im
+   10.18632/oncotarget.16977           Martinez et al.        2017  Different patterns of age-related central olfactory decline in men and
+   10.7554/elife.47177                 Zhou et al.            2019  Characterizing functional pathways of the human olfactory system
+   https://openreview.net/forum?id=q9VherQJd8_ Hladiš et al.          2023  Matching receptor to odorant with protein language and graph neural ne
+   https://github.com/BioMachineLearning/openpom BioMachineLearning     2023  OpenPOM: open-source Principal Odor Map
+
+GENOTYPE CASES (alleles compared within one paper)
+   OR7D4 × androstenone [10.1038/nature06162]: RT: agonist EC50 12 µM; WM: non_agonist (tested to 30 µM)
+   OR2J3 × cis-3-hexenol [10.1093/chemse/bjs049]: reference: agonist EC50 24.3 µM; T113A+R226Q: non_agonist (tested to 10000 µM)
+   OR10G4 × guaiacol (curated) [10.1038/nn.3598]: reference: agonist EC50 0.0398 µM; APT (2 aa): agonist EC50 0.02 µM; VLT (5 aa): agonist EC50 3.16 µM; ALI (8 aa): non_agonist
+
+PREDICTION INDEX (Phase 2 nearest-neighbour baseline)
+   hold-one-out over 142 molecules with enough ground truth: top-ranked prediction correct 61% of the time (n = 138); precision 0.48, recall 0.13 at score >= 0.5
+   receptor reference set: 654 molecules, 1306 measured agonist pairs (median 4 receptors tested per molecule)
+   descriptor reference set: 3522 molecules with expert odor labels
+   fingerprints: 1044 KiB (2048-bit Morgan, radius 2, chirality on)
+
+LEARNED MODEL (per-receptor logistic regression)
+   trained 31 per-receptor models (5-fold stratified cross-validation per receptor, identical folds for both methods)
+   mean ROC-AUC: learned 0.691 vs neighbours 0.677  (better on 22/31 receptors) -> learned model wins on average
+   mean average precision: learned 0.422 vs neighbours 0.380
+
+8F76 propionate contacts (≤ 4 Å): His180(45.52x52) 2.4 Å, Gln181 2.65 Å, Arg262(6.59x59) 2.66 Å, Gly198(5.39x40) 3.29 Å, Phe155(4.57x57) 3.56 Å, Ile202(5.43x44) 3.6 Å, Ser258(6.55x55) 3.65 Å, His104(3.33x33) 3.66 Å, Leu158(4.60x60) 3.72 Å
