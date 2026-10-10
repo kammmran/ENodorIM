@@ -59,7 +59,14 @@ export function gridLayout(receptors: Receptor[], columns: number, cell: number,
 }
 
 export type CellValue =
-  | { mode: "activation"; act: ReceptorActivation }
+  | {
+      mode: "activation";
+      act: ReceptorActivation;
+      /** Overrides the activation ramp, e.g. with a mixture component's own hue. */
+      ramp?: (a: number) => string;
+      /** Extra tooltip line, e.g. which component drives this receptor. */
+      note?: string;
+    }
   | { mode: "coverage"; nAgonists: number; nTested: number };
 
 function evidenceScale(e: EvidenceTier | null): number {
@@ -88,11 +95,12 @@ function Cell({ x, y, size, v, pal, maxAgonists }: { x: number; y: number; size:
     );
   const s = size * evidenceScale(act.evidence);
   const o = (size - s) / 2;
+  const ramp = v.ramp ?? pal.ramp;
   if (act.a <= 0)
     return (
-      <rect x={x + o + 0.5} y={y + o + 0.5} width={s - 1} height={s - 1} rx={1.2} fill="none" stroke={pal.ramp(0.55)} strokeWidth={1} />
+      <rect x={x + o + 0.5} y={y + o + 0.5} width={s - 1} height={s - 1} rx={1.2} fill="none" stroke={ramp(0.55)} strokeWidth={1} />
     );
-  return <rect x={x + o} y={y + o} width={s} height={s} rx={1.2} fill={pal.ramp(act.a)} />;
+  return <rect x={x + o} y={y + o} width={s} height={s} rx={1.2} fill={ramp(act.a)} />;
 }
 
 export interface ReceptorGridProps {
@@ -215,6 +223,7 @@ function GridTooltip({ receptor, v, left, top }: { receptor: Receptor; v: CellVa
             </div>
           )}
           {v.act.genotype && <div>Genotype {v.act.genotype.genotype}</div>}
+          {v.note && <div>{v.note}</div>}
         </>
       )}
       <div>

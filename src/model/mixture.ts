@@ -158,6 +158,8 @@ export interface DescriptorShare {
   label: string;
   weight: number;
   from: string[];
+  /** Which components reported this word, and how much each contributes. */
+  parts: { component: string; weight: number }[];
 }
 
 /**
@@ -186,15 +188,20 @@ export function blendDescriptors(components: MixtureComponent[], weights: Map<st
     for (const label of labels) {
       let e = acc.get(label);
       if (!e) {
-        e = { label, weight: 0, from: [] };
+        e = { label, weight: 0, from: [], parts: [] };
         acc.set(label, e);
       }
       e.weight += w;
       if (!e.from.includes(stimulus.label)) e.from.push(stimulus.label);
+      e.parts.push({ component: stimulus.label, weight: w });
     }
   }
   const out = [...acc.values()];
-  if (total > 0) for (const e of out) e.weight /= total;
+  if (total > 0)
+    for (const e of out) {
+      e.weight /= total;
+      for (const part of e.parts) part.weight /= total;
+    }
   out.sort((a, b) => b.weight - a.weight || a.label.localeCompare(b.label));
   return out.slice(0, 12);
 }

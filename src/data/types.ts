@@ -205,3 +205,62 @@ export interface Reference {
   resolved: string | null;
   cited_for: string | null;
 }
+
+/**
+ * Output of scripts/pipeline/benchmark_models.py: every model family scored
+ * under both flat and nested cross-validation. Loaded only by the benchmark
+ * page, so it stays out of the initial payload.
+ */
+export interface ModelBenchmark {
+  kind: "model-benchmark";
+  molecules: number;
+  receptors: number;
+  seconds: number;
+  scheme: {
+    outer_folds: number;
+    inner_folds: number;
+    repeats: number;
+    metric: string;
+    flat: string;
+    nested: string;
+  };
+  families: BenchmarkFamily[];
+  per_receptor: BenchmarkReceptor[];
+}
+
+export interface BenchmarkFamily {
+  family: string;
+  label: string;
+  note: string;
+  grid_size: number;
+  mean_flat_auc: number;
+  mean_nested_auc: number;
+  median_nested_auc: number;
+  /** flat minus nested: what tuning on the test folds buys you for free. */
+  optimism: number;
+  mean_nested_ap: number;
+  mean_flat_ap: number;
+  beats_shipped: number;
+  loses_to_shipped: number;
+  mean_delta_vs_shipped: number;
+  wilcoxon_p: number | null;
+  most_chosen: string | null;
+}
+
+export interface BenchmarkReceptor {
+  receptor: string;
+  n: number;
+  positives: number;
+  results: {
+    family: string;
+    flat_auc: number;
+    flat_auc_sd: number;
+    flat_ap: number;
+    nested_auc: number;
+    nested_auc_sd: number;
+    nested_ap: number;
+    grid_size: number;
+    chosen: string | null;
+    chosen_distinct: number;
+  }[];
+}

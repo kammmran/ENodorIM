@@ -13,7 +13,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "data": ".venv/bin/python -m scripts.pipeline.build"
+    "data": ".venv/bin/python -m scripts.pipeline.build",
+    "benchmark": ".venv/bin/python -m scripts.pipeline.benchmark_models",
+    "report": ".venv/bin/python -m scripts.report.benchmark_report && latexmk -pdf -cd reports/benchmark_report.tex"
   },
   "dependencies": {
     "@fontsource/ibm-plex-mono": "^5.3.0",

@@ -53,3 +53,27 @@ export function polylineLength(pts: Pt[]): number {
   for (let i = 1; i < pts.length; i++) s += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
   return s;
 }
+
+/**
+ * Split n marks between components in proportion to `weights` (largest
+ * remainder, so the counts add up to exactly n), then interleave them
+ * deterministically — otherwise every component's molecules would arrive in one
+ * block and the colours would read as a sequence rather than a mixture.
+ * Returns one component index per mark.
+ */
+export function allocateMarks(weights: number[], n: number): number[] {
+  if (!weights.length) return [];
+  const total = weights.reduce((s, w) => s + Math.max(0, w), 0);
+  if (total <= 0) return Array.from({ length: n }, (_, i) => i % weights.length);
+  const exact = weights.map((w) => (Math.max(0, w) / total) * n);
+  const counts = exact.map((x) => Math.floor(x));
+  let left = n - counts.reduce((s, c) => s + c, 0);
+  // Hand the remaining marks to the largest fractional parts first.
+  const order = exact.map((x, i) => ({ i, frac: x - Math.floor(x) })).sort((a, b) => b.frac - a.frac);
+  for (let k = 0; left > 0; k++, left--) counts[order[k % order.length].i]++;
+  const flat: number[] = [];
+  counts.forEach((c, i) => {
+    for (let k = 0; k < c; k++) flat.push(i);
+  });
+  return flat.map((v, i) => ({ v, r: rand(i * 3 + 11) })).sort((a, b) => a.r - b.r).map((x) => x.v);
+}

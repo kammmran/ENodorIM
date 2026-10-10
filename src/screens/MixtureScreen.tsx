@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useData } from "../data/load";
 import { DRAWN_ID, predictedStimulus } from "../data/predictService";
 import { formatConc } from "../model/activation";
@@ -10,11 +10,12 @@ import {
   mixtureStimulus,
   normaliseFractions,
   type MixtureComponent,
+  type MixtureReceptor,
 } from "../model/mixture";
 import { simulate } from "../model/simulation";
 import { go } from "../state/router";
 import { useStore } from "../state/store";
-import { usePalette } from "../ui/colors";
+import { catColor, tintRamp, usePalette } from "../ui/colors";
 import { ConcentrationSlider } from "../ui/Controls";
 import { Molecule } from "../ui/Molecule";
 import { ReceptorGrid, GridLegend } from "../ui/ReceptorGrid";
@@ -51,6 +52,51 @@ export function MixtureScreen() {
   );
   const drives = useMemo(() => componentDrive(components, conc), [components, conc]);
   const descriptors = useMemo(() => blendDescriptors(components, drives), [components, drives]);
+
+  // One hue per component, assigned in the order the components were added and
+  // never cycled: the colour follows the component, so removing one does not
+  // repaint the others. Past the last categorical slot a component stays
+  // neutral grey rather than borrowing a colour that already means something.
+  const colors = useMemo(() => {
+    const byId = new Map<string, string>();
+    const byLabel = new Map<string, string>();
+    normalised.forEach((c, i) => {
+      const color = catColor(pal, i);
+      byId.set(c.stimulus.id, color);
+      byLabel.set(c.stimulus.label, color);
+    });
+    return { byId, byLabel };
+  }, [normalised, pal]);
+
+  // Each component's hue as a sequential ramp, so a barcode can show both which
+  // component drives a receptor and how strongly.
+  const ramps = useMemo(() => {
+    const m = new Map<string, (a: number) => string>();
+    for (const [label, color] of colors.byLabel) m.set(label, tintRamp(pal, color));
+    return m;
+  }, [colors, pal]);
+
+  // Contributions are sorted by share, so the first one is the main driver.
+  const dominant = useMemo(() => {
+    const m = new Map<string, MixtureReceptor>();
+    for (const r of combined) m.set(r.receptor, r);
+    return m;
+  }, [combined]);
+
+  const [colourBy, setColourBy] = useState<"activation" | "component">("activation");
+  const patternValues = useMemo(() => {
+    if (!sim) return [];
+    return sim.acts.map((act) => {
+      if (colourBy === "activation") return { mode: "activation" as const, act };
+      const top = dominant.get(act.receptor)?.contributions[0];
+      return {
+        mode: "activation" as const,
+        act,
+        ramp: top ? ramps.get(top.component) : undefined,
+        note: top ? `Driven mainly by ${top.component} (${Math.round(top.share * 100)}% of the drive here)` : undefined,
+      };
+    });
+  }, [sim, colourBy, dominant, ramps]);
 
   const singles = useMemo(
     () =>
@@ -123,8 +169,12 @@ export function MixtureScreen() {
               return (
                 <div
                   key={part.id}
-                  style={{ display: "grid", gridTemplateColumns: "60px 1fr 200px 32px", gap: 12, alignItems: "center", padding: "8px 0", borderBottom: `1px solid ${pal.line}` }}
+                  style={{ display: "grid", gridTemplateColumns: "3px 60px 1fr 200px 32px", gap: 12, alignItems: "center", padding: "8px 0", borderBottom: `1px solid ${pal.line}` }}
                 >
+                  <span
+                    aria-hidden
+                    style={{ alignSelf: "stretch", background: colors.byId.get(c.stimulus.id) ?? pal.muted, borderRadius: 2 }}
+                  />
                   <div style={{ height: 50 }}>
                     <Molecule smiles={od?.smiles ?? drawn?.smiles ?? null} name={c.stimulus.label} width={120} height={80} />
                   </div>
@@ -176,16 +226,39 @@ export function MixtureScreen() {
                   <h2>Mixture pattern</h2>
                   <Prov kind={stimulus.provenance} />
                 </div>
+                <div className="seg" style={{ marginBottom: 10 }} role="group" aria-label="Colour the barcode by">
+                  <button aria-pressed={colourBy === "activation"} onClick={() => setColourBy("activation")}>
+                    Colour by activation
+                  </button>
+                  <button aria-pressed={colourBy === "component"} onClick={() => setColourBy("component")}>
+                    Colour by component
+                  </button>
+                </div>
                 <ReceptorGrid
                   receptors={data.receptors}
-                  values={sim.acts.map((act) => ({ mode: "activation" as const, act }))}
+                  values={patternValues}
                   columns={36}
                   cell={14}
                   onSelect={(g) => go(`/receptors/${g}`)}
-                  label={`Mixture receptor pattern: ${sim.active.length} receptors respond at ${formatConc(conc)} total concentration.`}
+                  label={
+                    colourBy === "component"
+                      ? `Mixture receptor pattern, each receptor in the colour of the component that drives it most: ${sim.active.length} receptors respond at ${formatConc(conc)} total concentration.`
+                      : `Mixture receptor pattern: ${sim.active.length} receptors respond at ${formatConc(conc)} total concentration.`
+                  }
                 />
                 <div style={{ marginTop: 8 }}>
-                  <GridLegend compact />
+                  {colourBy === "component" ? (
+                    <>
+                      <ComponentLegend components={normalised} colors={colors.byId} />
+                      <p className="tiny muted" style={{ marginTop: 6 }}>
+                        Each receptor takes the colour of the component supplying most of its drive; the shade still reads as
+                        activation, pale to saturated. A receptor driven by two components therefore shows only its main one —
+                        the table below gives the full split.
+                      </p>
+                    </>
+                  ) : (
+                    <GridLegend compact />
+                  )}
                 </div>
                 <ExportButtons
                   acts={sim.acts}
@@ -233,9 +306,18 @@ export function MixtureScreen() {
                             </td>
                             <td className="num">{r.bestSingleEc50 !== null ? formatConc(r.bestSingleEc50) : "–"}</td>
                             <td className="tiny">
+                              <span className="share-bar" aria-hidden>
+                                {r.contributions.map((c) => (
+                                  <span
+                                    key={c.component}
+                                    style={{ width: `${c.share * 100}%`, background: colors.byLabel.get(c.component) ?? pal.muted }}
+                                  />
+                                ))}
+                              </span>
                               {r.contributions.map((c, i) => (
-                                <span key={c.component}>
+                                <span key={c.component} style={{ whiteSpace: "nowrap" }}>
                                   {i > 0 && " · "}
+                                  <Swatch color={colors.byLabel.get(c.component) ?? pal.muted} />
                                   {c.component} <span className="muted">{Math.round(c.share * 100)}%</span>
                                 </span>
                               ))}
@@ -264,18 +346,25 @@ export function MixtureScreen() {
                   <span className="tiny muted">same total concentration, for comparison</span>
                 </div>
                 <div style={{ display: "grid", gap: 10 }}>
-                  {singles.map((s) => (
-                    <div key={s.label}>
+                  {singles.map((single) => (
+                    <div key={single.label}>
                       <div className="plot-title">
-                        <span>{s.label}</span>
-                        <strong>{s.sim.active.length} respond</strong>
+                        <span>
+                          <Swatch color={colors.byLabel.get(single.label) ?? pal.muted} />
+                          {single.label}
+                        </span>
+                        <strong>{single.sim.active.length} respond</strong>
                       </div>
                       <ReceptorGrid
                         receptors={data.receptors}
-                        values={s.sim.acts.map((act) => ({ mode: "activation" as const, act }))}
+                        values={single.sim.acts.map((act) => ({
+                          mode: "activation" as const,
+                          act,
+                          ramp: ramps.get(single.label),
+                        }))}
                         columns={44}
                         cell={8}
-                        label={`${s.label} alone: ${s.sim.active.length} receptors respond`}
+                        label={`${single.label} alone: ${single.sim.active.length} receptors respond`}
                         showClassLabels={false}
                       />
                     </div>
@@ -297,12 +386,23 @@ export function MixtureScreen() {
                 {descriptors.map((d) => (
                   <div className="row" key={d.label}>
                     <span>{d.label}</span>
-                    <span className="bar">
-                      <span style={{ width: `${Math.min(100, d.weight * 100)}%` }} />
+                    <span className="bar stack" title={`from ${d.from.join(", ")}`}>
+                      {d.parts.map((part) => (
+                        <span
+                          key={part.component}
+                          style={{
+                            width: `${Math.min(100, part.weight * 100)}%`,
+                            background: colors.byLabel.get(part.component) ?? pal.muted,
+                          }}
+                        />
+                      ))}
                     </span>
                     <span className="num">{Math.round(d.weight * 100)}%</span>
                   </div>
                 ))}
+              </div>
+              <div style={{ marginTop: 8 }}>
+                <ComponentLegend components={normalised} colors={colors.byId} />
               </div>
               <p className="source-line" style={{ marginTop: 8 }}>
                 Each component's reported words, weighted by how much receptor drive it contributes. This is a blend for
@@ -330,6 +430,39 @@ export function MixtureScreen() {
           </div>
         </aside>
       </div>
+    </div>
+  );
+}
+
+/** A component's colour chip. Always rendered beside the component's name, so
+    identity is never carried by colour alone. */
+function Swatch({ color }: { color: string }) {
+  return (
+    <span
+      aria-hidden
+      style={{
+        display: "inline-block",
+        width: 8,
+        height: 8,
+        borderRadius: 2,
+        background: color,
+        marginRight: 5,
+        verticalAlign: "baseline",
+      }}
+    />
+  );
+}
+
+function ComponentLegend({ components, colors }: { components: MixtureComponent[]; colors: Map<string, string> }) {
+  const pal = usePalette();
+  return (
+    <div className="legend-row" role="list" aria-label="Mixture components">
+      {components.map((c) => (
+        <span role="listitem" key={c.stimulus.id}>
+          <Swatch color={colors.get(c.stimulus.id) ?? pal.muted} />
+          {c.stimulus.label}
+        </span>
+      ))}
     </div>
   );
 }

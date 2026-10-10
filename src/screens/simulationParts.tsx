@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useData } from "../data/load";
-import { useOdorant, useStimulus } from "../data/useOdorant";
-import { MIXTURE_ID } from "../model/mixture";
+import { useMixtureComponents, useOdorant, useStimulus } from "../data/useOdorant";
+import { MIXTURE_ID, combineReceptors } from "../model/mixture";
 import { formatConc } from "../model/activation";
 import { EVIDENCE_LABEL } from "../model/evidence";
 import type { PersonProfile } from "../model/modifiers";
@@ -15,11 +15,11 @@ import { FiringScene } from "../scenes/FiringScene";
 import { PerceptionScene } from "../scenes/PerceptionScene";
 import { SniffScene } from "../scenes/SniffScene";
 import { TransductionScene } from "../scenes/TransductionScene";
-import type { SceneProps } from "../scenes/common";
+import type { SceneComponent, SceneMixture, SceneProps } from "../scenes/common";
 import { STAGE_TEXT } from "../scenes/content";
 import { useStore } from "../state/store";
 import { go } from "../state/router";
-import { usePalette, useReducedMotion } from "../ui/colors";
+import { catColor, usePalette, useReducedMotion, type Palette } from "../ui/colors";
 import { NextIcon, PauseIcon, PlayIcon, PrevIcon, RestartIcon } from "../ui/Icons";
 import { LinePlot, SpikeRaster } from "../ui/Plots";
 import { PerceptPanel } from "../ui/Percept";
@@ -198,6 +198,34 @@ export function Scrubber() {
   );
 }
 
+/**
+ * Mixture components with one hue each, for the scenes that draw individual
+ * molecules. Colours are assigned by position in the mixture, the same order
+ * the mixtures screen uses, so a component keeps its colour across both screens.
+ */
+function useSceneMixture(odorantId: string, pal: Palette): SceneMixture | undefined {
+  const parts = useMixtureComponents();
+  return useMemo(() => {
+    if (odorantId !== MIXTURE_ID || parts.length === 0) return undefined;
+    const components: SceneComponent[] = parts.map((c, i) => ({
+      id: c.stimulus.id,
+      label: c.stimulus.label,
+      fraction: c.fraction,
+      color: catColor(pal, i),
+    }));
+    const byId = new Map(components.map((c) => [c.id, c]));
+    const byLabel = new Map(components.map((c) => [c.label, c.id]));
+    const shares = new Map<string, { id: string; share: number }[]>();
+    for (const r of combineReceptors(parts)) {
+      shares.set(
+        r.receptor,
+        r.contributions.map((c) => ({ id: byLabel.get(c.component) ?? c.component, share: c.share })),
+      );
+    }
+    return { components, shares, byId };
+  }, [odorantId, parts, pal]);
+}
+
 /** The scene for the current stage, its caption and details. */
 export function StageView({ sim, odorantId, profile, compact = false }: { sim: SimulationResult; odorantId: string; profile: PersonProfile; compact?: boolean }) {
   const time = useStore((s) => s.time);
@@ -205,7 +233,8 @@ export function StageView({ sim, odorantId, profile, compact = false }: { sim: S
   const reduced = useReducedMotion();
   const { stage, p } = locate(time);
   const odorant = useOdorant(odorantId)!;
-  const props: SceneProps = { p, tau: physiologicalTime(time), sim, odorant, reduced, pal };
+  const mixture = useSceneMixture(odorantId, pal);
+  const props: SceneProps = { p, tau: physiologicalTime(time), sim, odorant, mixture, reduced, pal };
   const text = STAGE_TEXT[stage.id];
   const scene = (() => {
     switch (stage.id) {

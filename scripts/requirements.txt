@@ -4,3 +4,6 @@ requests>=2.31
 gemmi>=0.6
 scikit-learn>=1.5
 numpy>=1.26
+# used directly by scripts/pipeline/benchmark_models.py (both ship with scikit-learn)
+scipy>=1.11
+joblib>=1.3

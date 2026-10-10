@@ -27,6 +27,17 @@
   --series-2: #eb6834;
   --mucus: #eceff2;
   --tissue: #f4f0ea;
+  /* categorical hues, for mixture components and other identity encodings.
+     Fixed order, never cycled: slot n always means component n. Validated as a
+     set on both surfaces (lightness band, chroma floor, CVD and normal-vision
+     separation on adjacent pairs); the three light slots under 3:1 contrast are
+     only ever used beside a visible label. */
+  --cat-1: #2a78d6;
+  --cat-2: #eb6834;
+  --cat-3: #1baf7a;
+  --cat-4: #eda100;
+  --cat-5: #e87ba4;
+  --cat-6: #008300;
   /* activation ramp (sequential, one hue): low → high */
   --act-0: #b7d3f6;
   --act-1: #6da7ec;
@@ -64,6 +75,12 @@
     --series-2: #d95926;
     --mucus: #1b222b;
     --tissue: #23201c;
+    --cat-1: #3987e5;
+    --cat-2: #d95926;
+    --cat-3: #199e70;
+    --cat-4: #c98500;
+    --cat-5: #d55181;
+    --cat-6: #008300;
     --act-0: #104281;
     --act-1: #256abf;
     --act-2: #3987e5;
@@ -88,6 +105,12 @@
   --series-2: #d95926;
   --mucus: #1b222b;
   --tissue: #23201c;
+  --cat-1: #3987e5;
+  --cat-2: #d95926;
+  --cat-3: #199e70;
+  --cat-4: #c98500;
+  --cat-5: #d55181;
+  --cat-6: #008300;
   --act-0: #104281;
   --act-1: #256abf;
   --act-2: #3987e5;
@@ -410,6 +433,15 @@ table.data th button:hover { color: var(--ink); }
 .bars .row { display: grid; grid-template-columns: 110px 1fr 42px; gap: var(--s2); align-items: center; }
 .bars .row .bar { height: 4px; background: var(--surface-2); position: relative; }
 .bars .row .bar span { position: absolute; left: 0; top: 0; bottom: 0; background: var(--series-1); }
+/* Stacked variant: one segment per contributing component, in its own hue, with
+   a surface gap between segments so adjacent fills stay separable. */
+.bars .row .bar.stack { display: flex; gap: 2px; }
+.bars .row .bar.stack span { position: static; flex: 0 0 auto; min-width: 2px; }
+/* Share of a receptor's drive, split by component. */
+.share-bar {
+  display: flex; gap: 2px; height: 4px; margin-bottom: 4px; background: var(--surface-2);
+}
+.share-bar > span { min-width: 2px; }
 .source-line { font-size: 0.6875rem; color: var(--muted); line-height: 1.5; }
 .note {
   border: 0; border-left: 1px solid var(--axis); padding: var(--s1) 0 var(--s1) var(--s3);
@@ -420,8 +452,36 @@ table.data th button:hover { color: var(--ink); }
 .modifier-list li { font-size: 0.8125rem; border-bottom: 1px solid var(--line); padding-bottom: var(--s3); }
 .modifier-list li:last-child { border-bottom: 0; padding-bottom: 0; }
 
-/* ------------------------------------------------------------------- prose */
-.prose { max-width: 74ch; }
+/* ------------------------------------------------------------------- prose
+   A long reference page: the text column is centred in the page and a sticky
+   table of contents sits in the left margin. The column keeps its measure, so
+   centring moves the column rather than widening the lines. */
+.doc-layout {
+  /* An empty third track mirrors the contents rail, so the text column itself —
+     not the rail-plus-text pair — is what sits centred on the page. */
+  display: grid; grid-template-columns: 216px minmax(0, 74ch) 216px; gap: var(--s6);
+  justify-content: center; align-items: start;
+}
+.doc-layout > .prose { margin: 0; }
+.toc {
+  position: sticky; top: 76px; max-height: calc(100vh - 110px); overflow-y: auto;
+  font-size: 0.8125rem; scrollbar-width: thin;
+}
+.toc .eyebrow { display: block; margin-bottom: var(--s2); }
+.toc ol { list-style: none; margin: 0; padding: 0; }
+.toc li { margin: 0; }
+.toc a {
+  display: block; padding: 3px 0 3px var(--s3); color: var(--ink-2); text-decoration: none;
+  border-left: 1px solid var(--line); line-height: 1.35;
+}
+.toc a:hover { color: var(--ink); border-left-color: var(--axis); }
+.toc a[aria-current="true"] { color: var(--ink); border-left-color: var(--accent); }
+.toc .sub a { padding-left: var(--s4); font-size: 0.75rem; color: var(--muted); }
+.toc .sub a:hover, .toc .sub a[aria-current="true"] { color: var(--ink-2); }
+
+.prose { max-width: 74ch; margin: 0 auto; }
+/* Anchored headings: clear the sticky header when jumped to. */
+.prose h1[id], .prose h2[id], .prose h3[id] { scroll-margin-top: 72px; }
 .prose h2 { margin-top: 2em; padding-top: var(--s4); border-top: 1px solid var(--line); }
 .prose h3 { margin-top: 1.6em; }
 .prose li { margin-bottom: 0.3em; }
@@ -434,6 +494,11 @@ table.data th button:hover { color: var(--ink); }
 /* -------------------------------------------------------------- responsive */
 @media (max-width: 1180px) {
   .sim-layout, .explorer, .start-grid { grid-template-columns: minmax(0, 1fr); gap: var(--s5); }
+  /* No room for a margin column: the contents collapse to a list above the text. */
+  .doc-layout { grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
+  .doc-layout > .toc { position: static; max-height: none; overflow: visible; }
+  .toc ol { display: flex; flex-wrap: wrap; gap: 0 var(--s3); }
+  .toc .sub { display: none; }
   /* Stacked, so the column rule becomes a top rule. */
   .side, .explorer > aside {
     border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: var(--s5);
@@ -457,6 +522,15 @@ table.data th button:hover { color: var(--ink); }
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
 @media print {
-  .site-header, .scrubber, .kbd-hint, .export-row { display: none; }
+  .site-header, .scrubber, .kbd-hint, .export-row, .toc { display: none; }
+  .doc-layout { display: block; }
   main { max-width: none; }
 }
+
+/* ------------------------------------------------------------- benchmark figure */
+.bench-fig { margin: var(--s3) 0 var(--s4); }
+.bench-fig svg { display: block; max-width: 100%; height: auto; margin-top: var(--s2); }
+.bench-fig .legend-row { margin-bottom: var(--s1); }
+/* Nine model columns: let the per-receptor table scroll rather than squeeze. */
+.bench-scroll { overflow-x: auto; }
+.bench-scroll table.data { min-width: 640px; }

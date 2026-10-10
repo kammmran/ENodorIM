@@ -22,6 +22,14 @@ function mixtureComponents(
   return normaliseFractions(out);
 }
 
+/** The mixture currently in the store, resolved to components with shares. */
+export function useMixtureComponents(): MixtureComponent[] {
+  const data = useData();
+  const drawn = useStore((s) => s.drawn);
+  const mixture = useStore((s) => s.mixture);
+  return useMemo(() => mixtureComponents(mixture, data, drawn), [mixture, data, drawn]);
+}
+
 export function useOdorant(id: string): Odorant | undefined {
   const data = useData();
   const drawn = useStore((s) => s.drawn);

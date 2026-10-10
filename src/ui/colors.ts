@@ -9,6 +9,8 @@ import { useStore } from "../state/store";
 
 export interface Palette {
   ramp: (a: number) => string;
+  /** Categorical hues in fixed order, for identity (mixture components). */
+  cats: string[];
   ink: string;
   ink2: string;
   muted: string;
@@ -30,6 +32,7 @@ function read(): Palette {
   const scale = scaleLinear<string>().domain([0, 0.25, 0.5, 0.75, 1]).range(stops).interpolate(interpolateLab).clamp(true);
   return {
     ramp: (a: number) => scale(a),
+    cats: [1, 2, 3, 4, 5, 6].map((n) => v(`--cat-${n}`)),
     ink: v("--ink"),
     ink2: v("--ink-2"),
     muted: v("--muted"),
@@ -57,6 +60,35 @@ export function usePalette(): Palette {
     return () => mq.removeEventListener("change", on);
   }, [theme]);
   return pal;
+}
+
+/**
+ * How many components get their own hue. Categorical slots are assigned in
+ * fixed order and never cycled, so anything past the last slot is shown in the
+ * neutral "other" grey rather than repeating a colour that already means
+ * something else.
+ */
+export const CAT_SLOTS = 6;
+
+/** Colour for the n-th item of a categorical set, or neutral past the slots. */
+export function catColor(pal: Palette, i: number): string {
+  return i < pal.cats.length ? pal.cats[i] : pal.muted;
+}
+
+/**
+ * A one-hue sequential ramp built from a categorical colour: the activation
+ * ramp's job (magnitude) in a component's own hue, so a barcode can show both
+ * which component drives a receptor and how hard. Anchored on the sunken
+ * surface, so it reads the same way in both themes.
+ */
+export function tintRamp(pal: Palette, color: string): (a: number) => string {
+  const mix = interpolateLab(pal.surface2, color);
+  const scale = scaleLinear<string>()
+    .domain([0, 0.5, 1])
+    .range([mix(0.38), mix(0.72), color])
+    .interpolate(interpolateLab)
+    .clamp(true);
+  return (a: number) => scale(a);
 }
 
 export function useReducedMotion(): boolean {

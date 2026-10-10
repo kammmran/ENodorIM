@@ -20,10 +20,17 @@ function Channel({ x, open, pal, label }: { x: number; open: number; pal: SceneP
   );
 }
 
-export function TransductionScene({ tau, sim, reduced, pal, odorant }: SceneProps) {
+export function TransductionScene({ tau, sim, mixture, reduced, pal, odorant }: SceneProps) {
   const arrowId = `tr${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const lead = sim.lead;
   const tr = lead?.trace;
+  // The bound molecule on the lead receptor: in a mixture, the colour of the
+  // component that supplies most of the drive at this receptor.
+  const boundColor = (() => {
+    if (!mixture || !lead) return pal.accent;
+    const top = mixture.shares.get(lead.receptor)?.[0];
+    return (top && mixture.byId.get(top.id)?.color) ?? pal.accent;
+  })();
   const i = tr ? sampleIndex(tr, reduced ? Math.min(tau, tr.stimOff - 50) || 600 : tau) : 0;
   const G = tr ? tr.g[i] : 0;
   const camp = tr ? tr.camp[i] / Math.max(1e-6, peak(tr.camp)) : 0;
@@ -61,7 +68,7 @@ export function TransductionScene({ tau, sim, reduced, pal, odorant }: SceneProp
       <text x={80} y={MEM_BOT + 30} textAnchor="middle" fontSize={11} fontFamily="var(--font-mono)" fontWeight={500} fill={pal.ink}>
         {lead?.receptor ?? "OR"}
       </text>
-      {lead && <circle cx={80} cy={MEM_TOP + 3} r={3.4} fill={pal.accent} stroke={pal.surface} strokeWidth={1.2} />}
+      {lead && <circle cx={80} cy={MEM_TOP + 3} r={3.4} fill={boundColor} stroke={pal.surface} strokeWidth={1.2} />}
 
       {/* G protein and adenylyl cyclase III */}
       <ellipse cx={150} cy={MEM_BOT + 24} rx={22} ry={12} fill={pal.ramp(G)} fillOpacity={0.15 + 0.85 * G} stroke={pal.ink2} />

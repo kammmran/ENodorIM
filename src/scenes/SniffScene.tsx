@@ -1,6 +1,6 @@
 import { useId } from "react";
-import { Label, Leader, SchematicBadge, VB, type SceneProps } from "./common";
-import { clamp01, cubicD, lerp, pathAt, rand, smooth, type Cubic } from "./geometry";
+import { ComponentKey, Label, Leader, SchematicBadge, VB, type SceneProps } from "./common";
+import { allocateMarks, clamp01, cubicD, lerp, pathAt, rand, smooth, type Cubic } from "./geometry";
 
 // Sagittal section through the nose (face to the left), schematic.
 
@@ -19,8 +19,13 @@ const FLOW_INF: Cubic[] = [
 const FLOWS = [FLOW_OLF, FLOW_MID, FLOW_INF];
 const N = 42;
 
-export function SniffScene({ p, reduced, pal }: SceneProps) {
+export function SniffScene({ p, mixture, reduced, pal }: SceneProps) {
   const prog = reduced ? 1 : p;
+  // In a mixture every molecule belongs to a component, so each gets that
+  // component's hue and the inhaled stream shows the ratio directly. The
+  // molecules are shared out in proportion to the mixture fractions.
+  const owner = mixture ? allocateMarks(mixture.components.map((c) => c.fraction), N) : null;
+  const fillOf = (k: number) => (owner && mixture ? mixture.components[owner[k]].color : pal.ink);
   const molecules = Array.from({ length: N }, (_, k) => {
     const lane = k % 3;
     const delay = rand(k) * 0.55;
@@ -44,7 +49,7 @@ export function SniffScene({ p, reduced, pal }: SceneProps) {
   const arrowId = `arrow${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
 
   return (
-    <svg className="scene" viewBox={`0 0 ${VB.w} ${VB.h}`} role="img" aria-label="Sagittal section of the nose: inhaled air carries odorant molecules to the olfactory epithelium at the roof of the nasal cavity, where they dissolve in mucus.">
+    <svg className="scene" viewBox={`0 0 ${VB.w} ${VB.h}`} role="img" aria-label={`Sagittal section of the nose: inhaled air carries odorant molecules to the olfactory epithelium at the roof of the nasal cavity, where they dissolve in mucus.${mixture ? ` The mixture's components are drawn in different colours, in proportion to their shares: ${mixture.components.map((c) => `${c.label} ${Math.round(c.fraction * 100)}%`).join(", ")}.` : ""}`}>
       <SchematicBadge pal={pal} />
       {/* Frontal lobe and olfactory bulb */}
       <path d="M244 128 C240 70 334 32 452 36 C562 40 642 82 662 140 C602 150 522 147 470 141 C402 135 322 133 244 128 Z" fill={pal.tissue} stroke={pal.ink2} strokeWidth={1.2} />
@@ -93,16 +98,41 @@ export function SniffScene({ p, reduced, pal }: SceneProps) {
           <path d="M0 0 L8 4 L0 8 z" fill={pal.ink2} />
         </marker>
       </defs>
-      {/* Molecules */}
+      {/* Molecules. With one odorant, colour marks the change of state (air →
+          dissolved); with a mixture, colour is identity instead and dissolving
+          is shown by a halo, so the two never compete for the same channel. */}
       {molecules.map((m) =>
-        m ? <circle key={m.k} cx={m.x} cy={m.y} r={3.4} fill={m.dissolved ? pal.accent : pal.ink} stroke={pal.surface} strokeWidth={1.5} /> : null,
+        m ? (
+          <g key={m.k}>
+            {m.dissolved && mixture && <circle cx={m.x} cy={m.y} r={6.5} fill="none" stroke={fillOf(m.k)} strokeWidth={1.2} opacity={0.5} />}
+            <circle
+              cx={m.x}
+              cy={m.y}
+              r={3.4}
+              fill={mixture ? fillOf(m.k) : m.dissolved ? pal.accent : pal.ink}
+              stroke={pal.surface}
+              strokeWidth={1.5}
+            />
+          </g>
+        ) : null,
       )}
-      <g transform="translate(24 404)">
-        <circle cx={6} cy={6} r={3.4} fill={pal.ink} />
-        <Label x={16} y={10} text="odorant molecule in air" pal={pal} muted size={10} />
-        <circle cx={176} cy={6} r={3.4} fill={pal.accent} />
-        <Label x={186} y={10} text="dissolved in mucus" pal={pal} muted size={10} />
-      </g>
+      {mixture ? (
+        <>
+          <ComponentKey mixture={mixture} pal={pal} x={24} y={414} />
+          <g transform="translate(24 434)">
+            <circle cx={6} cy={-3} r={3.4} fill={pal.ink2} />
+            <circle cx={6} cy={-3} r={6.5} fill="none" stroke={pal.ink2} strokeWidth={1.2} opacity={0.5} />
+            <Label x={18} y={0} text="halo: dissolved in mucus" pal={pal} muted size={10} />
+          </g>
+        </>
+      ) : (
+        <g transform="translate(24 404)">
+          <circle cx={6} cy={6} r={3.4} fill={pal.ink} />
+          <Label x={16} y={10} text="odorant molecule in air" pal={pal} muted size={10} />
+          <circle cx={176} cy={6} r={3.4} fill={pal.accent} />
+          <Label x={186} y={10} text="dissolved in mucus" pal={pal} muted size={10} />
+        </g>
+      )}
     </svg>
   );
 }

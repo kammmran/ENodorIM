@@ -8,6 +8,7 @@ export type Route =
   | { page: "odorants"; id?: string }
   | { page: "draw" }
   | { page: "mixtures" }
+  | { page: "benchmark" }
   | { page: "how" };
 
 export function parseRoute(hash: string): Route {
@@ -26,6 +27,8 @@ export function parseRoute(hash: string): Route {
       return { page: "draw" };
     case "mixtures":
       return { page: "mixtures" };
+    case "benchmark":
+      return { page: "benchmark" };
     case "how":
       return { page: "how" };
     default:

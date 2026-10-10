@@ -1,8 +1,8 @@
 import { formatConc } from "../model/activation";
 import { EVIDENCE_LABEL } from "../model/evidence";
 import type { ReceptorActivation } from "../model/stimulus";
-import { Label, SchematicBadge, SevenTM, VB, type SceneProps } from "./common";
-import { clamp01, lerp, rand, smooth } from "./geometry";
+import { ComponentKey, Label, SchematicBadge, SevenTM, VB, type SceneProps } from "./common";
+import { allocateMarks, clamp01, lerp, rand, smooth } from "./geometry";
 
 // Zoom onto the cilium membrane: the strongest responders, plus one receptor
 // that was tested without response, for contrast.
@@ -17,7 +17,7 @@ function pickReceptors(sim: SceneProps["sim"]): ReceptorActivation[] {
   return out.slice(0, 5);
 }
 
-export function BindingScene({ p, sim, odorant, reduced, pal }: SceneProps) {
+export function BindingScene({ p, sim, odorant, mixture, reduced, pal }: SceneProps) {
   const prog = reduced ? 1 : p;
   const shown = pickReceptors(sim);
   const xs = shown.map((_, i) => 110 + (i * 580) / Math.max(1, shown.length - 1 || 1));
@@ -28,6 +28,20 @@ export function BindingScene({ p, sim, odorant, reduced, pal }: SceneProps) {
     y: 34 + rand(k + 3) * 118 + Math.cos(drift * 5 + k * 1.7) * 4,
     k,
   }));
+  // Free molecules in the mucus take their component's hue, in the mixture's
+  // ratio; the molecules shown binding each receptor are shared out by each
+  // component's share of the drive *at that receptor*, which is what makes the
+  // competition visible — a receptor can be occupied mostly by the minor
+  // component if that component is the more potent one there.
+  const freeOwner = mixture ? allocateMarks(mixture.components.map((c) => c.fraction), 24) : null;
+  const boundColors = (receptor: string, n: number): string[] => {
+    if (!mixture) return Array.from({ length: n }, () => pal.accent);
+    const shares = mixture.shares.get(receptor) ?? [];
+    if (!shares.length) return Array.from({ length: n }, () => pal.accent);
+    return allocateMarks(shares.map((x) => x.share), n).map(
+      (i) => mixture.byId.get(shares[i].id)?.color ?? pal.accent,
+    );
+  };
   return (
     <svg className="scene" viewBox={`0 0 ${VB.w} ${VB.h}`} role="img" aria-label={`Receptor binding: ${sim.active.length} receptor types respond to ${odorant.name} at ${formatConc(sim.conc)}${shown[0] && shown[0].a > 0 ? `; strongest ${shown[0].receptor} (a = ${shown[0].a.toFixed(2)})` : ""}.`}>
       <rect x={0} y={0} width={VB.w} height={memTop} fill={pal.mucus} />
@@ -39,7 +53,16 @@ export function BindingScene({ p, sim, odorant, reduced, pal }: SceneProps) {
       <Label x={16} y={memTop + 15} text="Cilium membrane" pal={pal} muted size={10} />
       <Label x={16} y={VB.h - 16} text="Inside the cilium" pal={pal} muted />
       {free.map((m) => (
-        <circle key={m.k} cx={m.x} cy={m.y} r={3.2} fill={pal.ink} stroke={pal.mucus} strokeWidth={1.2} opacity={0.75} />
+        <circle
+          key={m.k}
+          cx={m.x}
+          cy={m.y}
+          r={3.2}
+          fill={freeOwner && mixture ? mixture.components[freeOwner[m.k]].color : pal.ink}
+          stroke={pal.mucus}
+          strokeWidth={1.2}
+          opacity={0.75}
+        />
       ))}
       {shown.map((r, i) => {
         const x = xs[i];
@@ -47,6 +70,7 @@ export function BindingScene({ p, sim, odorant, reduced, pal }: SceneProps) {
         const fill = active ? pal.ramp(r.a) : pal.surface2;
         const nb = active ? Math.max(1, Math.round(r.a * 3)) : 0;
         const gOn = active ? smooth((prog - 0.55) / 0.2) : 0;
+        const bound = boundColors(r.receptor, nb);
         return (
           <g key={r.receptor}>
             {Array.from({ length: nb }, (_, m) => {
@@ -54,7 +78,7 @@ export function BindingScene({ p, sim, odorant, reduced, pal }: SceneProps) {
               if (t <= 0) return null;
               const sx = x - 40 + rand(i * 10 + m) * 80, sy = 40 + rand(i * 7 + m) * 80;
               const tx = x + (m - (nb - 1) / 2) * 6, ty = memTop + 7;
-              return <circle key={m} cx={lerp(sx, tx, t)} cy={lerp(sy, ty, t)} r={3.4} fill={pal.accent} stroke={pal.surface} strokeWidth={1.3} />;
+              return <circle key={m} cx={lerp(sx, tx, t)} cy={lerp(sy, ty, t)} r={3.4} fill={bound[m]} stroke={pal.surface} strokeWidth={1.3} />;
             })}
             <SevenTM x={x} y={memTop - 8} h={46} fill={fill} stroke={active ? pal.ink2 : pal.axis} pal={pal} />
             {gOn > 0 && (
@@ -93,8 +117,20 @@ export function BindingScene({ p, sim, odorant, reduced, pal }: SceneProps) {
       {shown.length === 0 && <Label x={VB.w / 2} y={260} anchor="middle" text="No receptor data for this odorant." pal={pal} muted />}
       <g transform={`translate(16 ${VB.h - 62})`} opacity={clamp01(prog * 3)}>
         <Label x={0} y={0} text={`${sim.active.length} receptor type${sim.active.length === 1 ? "" : "s"} respond at ${formatConc(sim.conc)} — the pattern is the code.`} pal={pal} weight={500} />
-        <Label x={0} y={16} text="Each glyph stands for all neurons that express that receptor (one receptor type per neuron, rodent data)." pal={pal} muted size={10.5} />
+        <Label
+          x={0}
+          y={16}
+          text={
+            mixture
+              ? "Molecules are coloured by component; how many of each reach a receptor follows that component's share of the drive there."
+              : "Each glyph stands for all neurons that express that receptor (one receptor type per neuron, rodent data)."
+          }
+          pal={pal}
+          muted
+          size={10.5}
+        />
       </g>
+      {mixture && <ComponentKey mixture={mixture} pal={pal} x={16} y={VB.h - 8} />}
     </svg>
   );
 }

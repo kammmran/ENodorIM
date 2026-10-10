@@ -2,6 +2,26 @@ import type { Odorant } from "../data/types";
 import type { SimulationResult } from "../model/simulation";
 import type { Palette } from "../ui/colors";
 
+/** One component of the mixture being simulated, with its own hue. */
+export interface SceneComponent {
+  id: string;
+  label: string;
+  fraction: number;
+  color: string;
+}
+
+/**
+ * The mixture behind the stimulus, for the scenes that draw individual odorant
+ * molecules. Downstream of the receptor a mixture is one stimulus, so only the
+ * sniff, binding and transduction scenes have components to tell apart.
+ */
+export interface SceneMixture {
+  components: SceneComponent[];
+  /** Per receptor, each component's share of the drive there (largest first). */
+  shares: Map<string, { id: string; share: number }[]>;
+  byId: Map<string, SceneComponent>;
+}
+
 export interface SceneProps {
   /** Progress through this stage, 0–1. */
   p: number;
@@ -9,6 +29,8 @@ export interface SceneProps {
   tau: number;
   sim: SimulationResult;
   odorant: Odorant;
+  /** Set only when the stimulus is a mixture of two or more components. */
+  mixture?: SceneMixture;
   reduced: boolean;
   pal: Palette;
 }
@@ -87,6 +109,30 @@ export function SchematicBadge({ pal, x = VB.w - 12, y = 20, text = "schematic" 
       <text x={x - w / 2} y={y} fontSize={10} textAnchor="middle" fill={pal.ink2} style={{ textTransform: "uppercase", letterSpacing: "0.05em" }}>
         {text}
       </text>
+    </g>
+  );
+}
+
+/**
+ * Component colours as a key along the bottom of a scene. Every swatch carries
+ * its component's name, so identity never rests on colour alone.
+ */
+export function ComponentKey({ mixture, pal, x = 16, y = VB.h - 20 }: { mixture: SceneMixture; pal: Palette; x?: number; y?: number }) {
+  let cx = 0;
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      {mixture.components.map((c) => {
+        const at = cx;
+        cx += c.label.length * 6 + 34;
+        return (
+          <g key={c.id}>
+            <circle cx={at + 5} cy={-3} r={3.6} fill={c.color} stroke={pal.surface} strokeWidth={1.2} />
+            <text x={at + 14} y={0} fontSize={10.5} fill={pal.ink2}>
+              {c.label}
+            </text>
+          </g>
+        );
+      })}
     </g>
   );
 }

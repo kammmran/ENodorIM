@@ -3,6 +3,7 @@ import { DataContext, loadData, type AppData } from "./data/load";
 import { useRoute, type Route } from "./state/router";
 import { DrawScreen } from "./screens/DrawScreen";
 import { HowItWorks } from "./screens/HowItWorks";
+import { BenchmarkScreen } from "./screens/BenchmarkScreen";
 import { MixtureScreen } from "./screens/MixtureScreen";
 import { OdorantExplorer } from "./screens/OdorantExplorer";
 import { ReceptorExplorer } from "./screens/ReceptorExplorer";
@@ -18,6 +19,7 @@ const NAV: { page: Route["page"]; href: string; label: string }[] = [
   { page: "odorants", href: "#/odorants", label: "Odorants" },
   { page: "draw", href: "#/draw", label: "Draw a molecule" },
   { page: "mixtures", href: "#/mixtures", label: "Mixtures" },
+  { page: "benchmark", href: "#/benchmark", label: "Benchmark" },
   { page: "how", href: "#/how", label: "How this works" },
 ];
 
@@ -35,6 +37,8 @@ function Page({ route }: { route: Route }) {
       return <DrawScreen />;
     case "mixtures":
       return <MixtureScreen />;
+    case "benchmark":
+      return <BenchmarkScreen />;
     case "how":
       return <HowItWorks />;
     default:
