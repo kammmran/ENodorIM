@@ -14,7 +14,7 @@ import requests
 
 from .paths import CACHE, GPCRDB_JSON, M2OR_DIR, M2OR_SNAPSHOT, PYRFUME_DIR, UNIPROT_TSV
 
-USER_AGENT = "ENodorIM-data-pipeline/0.1 (academic; DIFACQUIM, UNAM)"
+USER_AGENT = "ENodorIM-data-pipeline/0.1 (academic)"
 _session = requests.Session()
 _session.headers["User-Agent"] = USER_AGENT
 

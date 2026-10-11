@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "From molecule to smell: an interactive olfactory receptor simulator (DIFACQUIM, UNAM)",
+  "description": "From molecule to smell: an interactive olfactory receptor simulator",
   "scripts": {
     "assets": "node scripts/copy-assets.mjs",
     "predev": "npm run assets",

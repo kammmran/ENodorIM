@@ -405,8 +405,7 @@ export function HowItWorks() {
           </li>
         </ul>
         <p className="small muted">
-          For the tool: “From molecule to smell”, an interactive olfactory receptor simulator, DIFACQUIM group, School of
-          Chemistry, UNAM. Data built {data.meta.built} from M2OR{" "}
+          For the tool: “From molecule to smell”, an interactive olfactory receptor simulator. Data built {data.meta.built} from M2OR{" "}
           <span className="mono">{data.meta.m2or_file}</span>.
         </p>
 

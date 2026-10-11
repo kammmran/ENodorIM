@@ -10,7 +10,7 @@ A website that shows, step by step and in detail, what happens when a person sme
 
 **The centre of the project is the receptor step.** Every other stage exists to explain what the receptor activation pattern leads to. The site must be driven by real receptor–odorant data, not invented values.
 
-It belongs to a research project on predicting the fragrance of chemical mixtures (DIFACQUIM group, School of Chemistry, UNAM). That project describes olfactory perception in three stages, and the site follows the same three:
+It belongs to a research project on predicting the fragrance of chemical mixtures. That project describes olfactory perception in three stages, and the site follows the same three:
 
 1. Olfactory GPCRs as the initiating event of the olfactory stimulus
 2. Neuronal integration of the signal

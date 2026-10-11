@@ -6,7 +6,7 @@ An interactive simulator of human olfaction: an odorant reaches the nose, binds 
 
 The centre of the project is the **receptor step**. Which of the ~400 human odorant receptors respond is taken from measured cell-assay data (M2OR); every later stage shows what that activation pattern leads to, and every value on screen is labelled `measured`, `predicted` or `schematic`.
 
-Part of a research project on predicting the fragrance of chemical mixtures — DIFACQUIM group, School of Chemistry, UNAM. The original brief is in [PROMPT.md](PROMPT.md); the data check and decisions behind the build are in [PLAN.md](PLAN.md).
+Part of a research project on predicting the fragrance of chemical mixtures. The original brief is in [PROMPT.md](PROMPT.md); the data check and decisions behind the build are in [PLAN.md](PLAN.md).
 
 ## Quick start
 
@@ -97,7 +97,9 @@ Output in `data/processed/`: `receptors.json`, `odorants.json`, `pairs.json`, `g
 ## Project layout
 
 ```
-scripts/pipeline/   Python data pipeline (pandas, RDKit, gemmi)
+scripts/pipeline/   Python data pipeline (pandas, RDKit, gemmi) + the model benchmark
+scripts/report/     LaTeX report generated from the benchmark JSON
+reports/            the generated one-page report (.tex and .pdf)
 data/raw/           downloads (git-ignored)
 data/processed/     JSON the site loads (committed)
 src/model/          pure TypeScript simulation, no React — unit-tested
@@ -162,10 +164,51 @@ least 8 measured molecules on each side, and cross-validates it against the simi
 | mean average precision | **0.422** | 0.380 |
 | better on | 22 of 31 receptors | 9 |
 
-Random forests, extra trees, SVMs and other regularisation strengths all came within 0.01 AUC, so the data is the limit, not
-the algorithm — the comparison is shipped rather than hidden. Per-receptor AUC varies enormously (OR5AN1 0.98, several at
-chance), so every prediction carries its receptor's own AUC and the simulation uses the learned score only above AUC 0.70.
-The model exports to a 43 KB matrix and runs in the browser as a dot product.
+Per-receptor AUC varies enormously (OR5AN1 0.98, several at chance), so every prediction carries its receptor's own AUC and
+the simulation uses the learned score only above AUC 0.70. The model exports to a 43 KB matrix and runs in the browser as a
+dot product.
+
+### Benchmark: cross-validation and nested cross-validation
+
+The table above answers *how good is this model*. It does not answer *how good is the procedure that chose it* — and once
+you tune anything, that is the number that matters, because the same folds that pick a winner cannot also grade it fairly.
+`scripts/pipeline/benchmark_models.py` runs nine model families through both schemes on identical folds (5-fold stratified
+outer × 3 shuffles, pooled out-of-fold scoring, 3-fold inner search, bit filtering refitted per fold):
+
+| model family | grid | flat CV | nested CV | optimism | Δ vs shipped | p (Holm) |
+|---|---|---|---|---|---|---|
+| logistic C=0.1 (**shipped**, untuned) | 1 | 0.686 | **0.686** | — | — | — |
+| random forest | 4 | 0.707 | 0.686 | +0.022 | 0.000 | 0.78 |
+| extra trees | 4 | 0.710 | 0.683 | +0.027 | −0.003 | 0.78 |
+| logistic regression (L2) | 6 | 0.707 | 0.677 | +0.030 | −0.009 | 0.26 |
+| Bernoulli naive Bayes | 3 | 0.701 | 0.676 | +0.025 | −0.010 | 0.52 |
+| Tanimoto neighbours | 3 | 0.703 | 0.674 | +0.029 | −0.012 | 0.52 |
+| linear SVM | 4 | 0.712 | 0.671 | +0.040 | −0.015 | 0.08 |
+| RBF SVM | 9 | 0.726 | 0.668 | +0.058 | −0.018 | 0.08 |
+| logistic regression (L1) | 5 | 0.709 | 0.657 | +0.051 | −0.029 | 0.20 |
+
+Three results, and they all point the same way:
+
+- **Nothing beats the untuned shipped configuration.** It is the highest nested-CV score of the nine, tied by the random
+  forest. After Holm correction over the eight comparisons no family differs from it significantly; the three that reach an
+  uncorrected *p* < 0.05 are all *worse*.
+- **Tuning is worth +0.035 AUC of nothing.** That is the mean flat-minus-nested gap — score that evaporates once the
+  hyperparameter search is paid for honestly. It is larger than the entire spread between the nine families, so a tuned
+  model reported by flat CV would look like an improvement while being none. The gap scales with grid size: +0.058 for the
+  nine-point RBF SVM grid, +0.000 for the model that searches nothing.
+- **Fold noise is the same size as the differences.** Re-running the identical evaluation with a different shuffle moves a
+  single receptor's AUC by ±0.021.
+
+So the data is the limit, not the algorithm, and the comparison is published rather than hidden. The next gain has to come
+from more measured pairs, or from sharing one representation across receptors — not from a wider search.
+
+```bash
+npm run benchmark   # ≈24 min → data/processed/model_benchmark.json (site page #/benchmark)
+npm run report      # → reports/benchmark_report.pdf (one-page summary)
+```
+
+The benchmark page on the site renders this table, the flat-versus-nested figure and every receptor's own numbers;
+`scripts/report/benchmark_report.py` generates the LaTeX one-pager from the same JSON, so neither can drift from the run.
 
 ### Mixtures
 

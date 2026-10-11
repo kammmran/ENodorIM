@@ -244,6 +244,8 @@ export interface BenchmarkFamily {
   loses_to_shipped: number;
   mean_delta_vs_shipped: number;
   wilcoxon_p: number | null;
+  /** Holm-Bonferroni across the families compared to the shipped model. */
+  wilcoxon_p_holm: number | null;
   most_chosen: string | null;
 }
 

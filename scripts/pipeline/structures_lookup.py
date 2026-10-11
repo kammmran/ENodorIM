@@ -40,7 +40,7 @@ def resolve(inchikeys: list[str], session: requests.Session | None = None) -> di
     known = _load()
     todo = sorted({k for k in inchikeys if k and k not in known})
     s = session or requests.Session()
-    s.headers["User-Agent"] = "ENodorIM-data-pipeline/0.1 (academic; DIFACQUIM, UNAM)"
+    s.headers["User-Agent"] = "ENodorIM-data-pipeline/0.1 (academic)"
     for i in range(0, len(todo), BATCH):
         chunk = todo[i : i + BATCH]
         try:

@@ -316,7 +316,23 @@ def aggregate(per_receptor: list[dict], fams: list[Family]) -> list[dict]:
             wilcoxon_p=_wilcoxon(nest, base),
             most_chosen=got[0][1]["chosen"],
         ))
+    _holm(rows)
     return sorted(rows, key=lambda r: -r["mean_nested_auc"])
+
+
+def _holm(rows: list[dict]) -> None:
+    """Holm-Bonferroni across the families compared to the shipped model.
+
+    Eight comparisons against one reference on the same 31 receptors; without
+    the correction a nominal p < 0.05 here means very little.
+    """
+    tested = sorted([r for r in rows if r["wilcoxon_p"] is not None], key=lambda r: r["wilcoxon_p"])
+    m, prev = len(tested), 0.0
+    for i, r in enumerate(tested):
+        prev = max(prev, min(1.0, (m - i) * r["wilcoxon_p"]))
+        r["wilcoxon_p_holm"] = round(prev, 4)
+    for r in rows:
+        r.setdefault("wilcoxon_p_holm", None)
 
 
 def _find(receptor: dict, family: str) -> dict:
@@ -389,7 +405,18 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--quick", action="store_true", help="four families, fewer trees")
     ap.add_argument("--jobs", type=int, default=-1)
+    ap.add_argument("--reaggregate", action="store_true",
+                    help="recompute the summary from the stored per-receptor results, without refitting")
     args = ap.parse_args()
+
+    if args.reaggregate:
+        bench = json.loads((PROCESSED / "model_benchmark.json").read_text())
+        names = {f.name: f for f in families(False)}
+        present = [names[n] for n in (r["family"] for r in bench["per_receptor"][0]["results"]) if n in names]
+        bench["families"] = aggregate(bench["per_receptor"], present)
+        (PROCESSED / "model_benchmark.json").write_text(json.dumps(bench, separators=(",", ":")))
+        print("\n".join(report(bench)))
+        return
 
     index = json.loads((PROCESSED / "predict_index.json").read_text())
     blob = (PROCESSED / "predict_fp.bin").read_bytes()

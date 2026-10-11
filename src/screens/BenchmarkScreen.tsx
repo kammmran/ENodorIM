@@ -5,7 +5,8 @@ import { RELIABLE_AUC } from "../model/learned";
 import { usePalette } from "../ui/colors";
 
 const f3 = (x: number) => x.toFixed(3);
-const signed = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(3)}`;
+/** Signed to three places; a value that rounds to zero carries no sign. */
+const signed = (x: number) => (Math.abs(x) < 0.0005 ? "0.000" : `${x > 0 ? "+" : "−"}${Math.abs(x).toFixed(3)}`);
 
 export function BenchmarkScreen() {
   const [bench, setBench] = useState<ModelBenchmark | null>(null);
@@ -71,8 +72,17 @@ export function BenchmarkScreen() {
         {best.family === SHIPPED ? (
           <>
             nothing beats the shipped fixed-hyperparameter logistic regression: it is itself the highest-scoring of the{" "}
-            {bench.families.length} families under nested CV at AUC {f3(ship.mean_nested_auc)}, and the closest rival,{" "}
-            <strong>{runnerUp(bench)?.label}</strong>, trails by {signed(runnerUp(bench)?.mean_delta_vs_shipped ?? 0)}
+            {bench.families.length} families under nested CV at AUC {f3(ship.mean_nested_auc)}
+            {Math.abs(runnerUp(bench)?.mean_delta_vs_shipped ?? 1) < 0.0005 ? (
+              <>
+                , matched to three decimals by <strong>{runnerUp(bench)?.label}</strong> and ahead of the rest
+              </>
+            ) : (
+              <>
+                , with the closest rival, <strong>{runnerUp(bench)?.label}</strong>, trailing by{" "}
+                {signed(runnerUp(bench)?.mean_delta_vs_shipped ?? 0)}
+              </>
+            )}
           </>
         ) : (
           <>
@@ -101,6 +111,7 @@ export function BenchmarkScreen() {
             <th className="num">vs shipped</th>
             <th className="num">Win / loss</th>
             <th className="num">p</th>
+            <th className="num">p (Holm)</th>
           </tr>
         </thead>
         <tbody>
@@ -122,6 +133,7 @@ export function BenchmarkScreen() {
                 {f.family === SHIPPED ? "—" : `${f.beats_shipped} / ${f.loses_to_shipped}`}
               </td>
               <td className="num">{f.wilcoxon_p === null ? "—" : f.wilcoxon_p.toFixed(3)}</td>
+              <td className="num">{f.wilcoxon_p_holm === null ? "—" : f.wilcoxon_p_holm.toFixed(3)}</td>
             </tr>
           ))}
         </tbody>
@@ -129,7 +141,12 @@ export function BenchmarkScreen() {
       <p className="small muted">
         Mean per-receptor ROC-AUC and average precision on pooled out-of-fold scores. <em>Optimism</em> is flat minus
         nested. <em>Win / loss</em> counts receptors where the family's nested AUC beats or loses to the shipped model;{" "}
-        <em>p</em> is a Wilcoxon signed-rank test over the {bench.receptors} paired receptors.
+        <em>p</em> is a Wilcoxon signed-rank test over the {bench.receptors} paired receptors, and{" "}
+        <em>p (Holm)</em> corrects it for the {bench.families.length - 1} comparisons against the shipped model.
+      </p>
+
+      <p>
+        {sigSentence(bench)}
       </p>
 
       <h2>What it changes</h2>
@@ -177,6 +194,30 @@ function runnerUp(b: ModelBenchmark) {
 function meanFoldNoise(b: ModelBenchmark): number {
   const sds = b.per_receptor.map((r) => familyResult(r, SHIPPED)?.nested_auc_sd ?? 0);
   return sds.reduce((s, x) => s + x, 0) / Math.max(1, sds.length);
+}
+
+/** States the significance result as the corrected test actually supports it. */
+function sigSentence(b: ModelBenchmark): string {
+  const others = b.families.filter((f) => f.family !== SHIPPED);
+  const holm = others.filter((f) => f.wilcoxon_p_holm !== null && f.wilcoxon_p_holm < 0.05);
+  const raw = others.filter((f) => f.wilcoxon_p !== null && f.wilcoxon_p < 0.05);
+  const better = others.filter((f) => f.mean_delta_vs_shipped > 0);
+  if (holm.length === 0) {
+    const nominal =
+      raw.length === 0
+        ? "No family even reaches an uncorrected p < 0.05"
+        : `${raw.length} families reach an uncorrected p < 0.05 — ${raw
+            .map((f) => f.label)
+            .join(", ")} — and all of them are ${raw.every((f) => f.mean_delta_vs_shipped < 0) ? "worse" : "mixed"}, not better`;
+    return `After Holm correction for the ${others.length} comparisons against the shipped model, no family differs from it significantly. ${nominal}. ${
+      better.length === 0
+        ? "Not one family has a positive mean difference."
+        : `${better.length} family has a positive mean difference, within noise.`
+    }`;
+  }
+  return `After Holm correction, ${holm.length} families differ from the shipped model: ${holm
+    .map((f) => `${f.label} (${f.mean_delta_vs_shipped > 0 ? "better" : "worse"})`)
+    .join(", ")}.`;
 }
 
 function belowChance(b: ModelBenchmark): number {
