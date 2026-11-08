@@ -226,3 +226,11 @@ masking are **not** modelled, and the site says so prominently.
 ## Limits the site states openly
 
 Receptor data come from cell-based assays and show which receptors *can* respond, not what happens in a living nose. Most human receptors have no known ligand — "not tested" and "does not respond" are shown as different states. Assay concentrations are not nasal concentrations. Transduction timings are mostly rodent. The glomerular map and brain activity levels are schematic.
+
+## Data on Hugging Face
+
+The raw data folder (`data/raw`) is not stored in git. It was pushed to the private Hugging Face dataset [narmak28/enodorim-data](https://huggingface.co/datasets/narmak28/enodorim-data) on 2026-11-08. To restore it, run this from the project root:
+
+```
+hf download narmak28/enodorim-data --repo-type dataset --local-dir .
+```
